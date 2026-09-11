@@ -163,6 +163,12 @@ class WebCalMailer {
         $ical = '';
       }
       if( ! empty( $ical ) ) {
+        // Diagnostic: dump every generated calendar to the container /tmp so
+        // envelope/ICS comparison (create vs delete vs update) is possible
+        // without relying on mail server logs. Files: webcal_ics_METHOD_seqN_idM.ics
+        @file_put_contents( sys_get_temp_dir() . '/webcal_ics_'
+          . $this->icalMethod . '_seq' . $this->icalSequence . '_id' . $id . '.ics',
+          $ical );
         $this->mail->Ical = $ical;
         // PHPMailer only includes the text/calendar part when the message
         // is multipart/alternative, i.e. when AltBody is set in addition
