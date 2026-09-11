@@ -951,9 +951,9 @@ function export_vcal ( $id ) {
     echo "END:VCALENDAR\r\n";
 } //end function
 
-function export_ical ( $id = 'all', $attachment = false ) {
+function export_ical ( $id = 'all', $attachment = false, $method = 'PUBLISH' ) {
   global $cal_type, $cat_filter, $login,
-  $publish_fullname, $use_vtimezone, $vtimezone_data;
+  $publish_fullname, $use_vtimezone, $vtimezone_data, $EMAIL_FALLBACK_FROM;
 
   $exportId = -1;
   $ret = $Vret = $vtimezone_data = $use_vtimezone = '';
@@ -981,7 +981,7 @@ function export_ical ( $id = 'all', $attachment = false ) {
   $ret .= "$title\r\n";
   $ret .= generate_prodid ( 'ics' );
   $ret .= "VERSION:2.0\r\n";
-  $ret .= "METHOD:PUBLISH\r\n";
+  $ret .= "METHOD:$method\r\n";
 
   foreach ($entry_array as $key => $row) {
     $id = $row[0];
@@ -1086,6 +1086,20 @@ function export_ical ( $id = 'all', $attachment = false ) {
 
     $Vret .= 'LAST-MODIFIED:' . export_get_utc_date ( $moddate,$modtime ) . "\r\n";
 
+    /* For meeting requests (METHOD:REQUEST) add an ORGANIZER, DTSTAMP and
+     * SEQUENCE so that calendar clients (e.g. Outlook/Exchange) can process
+     * the invitation (AutoAccept) instead of showing a validation dialog. */
+    if ( $method == 'REQUEST' ) {
+      $orgName = ( empty ( $publish_fullname ) ? $login : $publish_fullname );
+      $orgName = addcslashes ( $orgName, "\54\73\134" );
+      $Vret .= "DTSTAMP:" . gmdate('Ymd\THis\Z') . "\r\n";
+      $Vret .= "SEQUENCE:0\r\n";
+      if ( ! empty ( $EMAIL_FALLBACK_FROM ) &&
+        preg_match ( '/^[^@\s]+@[^@\s]+$/', $EMAIL_FALLBACK_FROM ) ) {
+        $Vret .= 'ORGANIZER;CN="' . $orgName . '":MAILTO:' . $EMAIL_FALLBACK_FROM . "\r\n";
+      }
+    }
+
     $name = preg_replace( "/\r/", ' ', $name );
     // escape,;  \ in octal ascii
     $name = addcslashes ( $name, "\54\73\134" );
@@ -1163,6 +1177,12 @@ function export_ical ( $id = 'all', $attachment = false ) {
     }
     // ATTENDEE of the event
     $attendee = export_get_attendee( $id, 'ical' );
+    /* For meeting requests (METHOD:REQUEST), mark attendees as RSVP so
+     * Outlook/Exchange treat them as invited participants. */
+    if ( $method == 'REQUEST' ) {
+      for ( $i = 0; $i < count ( $attendee ); $i++ )
+        $attendee[$i] = preg_replace ( '/;PARTSTAT=/', ';RSVP=TRUE;PARTSTAT=', $attendee[$i], 1 );
+    }
     $attendcnt = count ( $attendee );
     for ( $i = 0; $i < $attendcnt; $i++ ) {
       $attendee[$i] = export_fold_lines ( $attendee[$i], 'utf8' );

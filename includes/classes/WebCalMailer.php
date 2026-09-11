@@ -25,6 +25,10 @@ use phpmailer\PHPMailer;
 class WebCalMailer {
   private $mail;
 
+  // iCal METHOD used for the calendar part of event emails (e.g. an
+  // Outlook meeting invitation with Exchange AutoAccept needs 'REQUEST').
+  public $icalMethod = 'REQUEST';
+
   /**
    * Constructor
    */
@@ -137,11 +141,21 @@ class WebCalMailer {
 
   /**
    * Send ics file Attachment.
+   * The calendar is embedded as a text/calendar MIME part with the
+   * configured METHOD (default REQUEST) instead of a plain .ics file
+   * attachment, so calendar clients (Outlook/Exchange) can process the
+   * event directly (and Exchange AutoAccept can add it automatically).
    */
   function IcsAttach( $id ) {
-    if( function_exists( 'export_ical' ) )
-      $this->mail->AddStringAttachment( export_ical( $id, true ),
-        'WebCalendar.ics', 'base64', 'text/ical' );
+    if( function_exists( 'export_ical' ) ) {
+      $this->mail->Ical = export_ical( $id, true, $this->icalMethod );
+      // PHPMailer only includes the text/calendar part when the message
+      // is multipart/alternative, i.e. when AltBody is set in addition
+      // to Body. Ensure that is the case (a trailing newline keeps the
+      // two bodies distinct).
+      if ( empty ( $this->mail->AltBody ) )
+        $this->mail->AltBody = $this->mail->Body . "\n";
+    }
   }
 
   /**
@@ -152,6 +166,8 @@ class WebCalMailer {
     $this->mail->ClearAllRecipients();
     $this->mail->ClearAttachments();
     $this->mail->ClearCustomHeaders();
+    $this->mail->AltBody = '';
+    $this->mail->Ical = '';
   }
 
   /**
