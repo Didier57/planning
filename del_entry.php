@@ -134,41 +134,6 @@ if ( $id > 0 && empty ( $error ) ) {
 
     $eventstart = date_to_epoch ( $fmtdate . $time );
     $TIME_FORMAT = 24;
-    for ( $i = 0, $cnt = count ( $partlogin ); $i < $cnt; $i++ ) {
-      // Log the deletion.
-      activity_log ( $id, $login, $partlogin[$i], $log_delete, '' );
-      // Check UAC.
-      $can_email = ( access_is_enabled()
-        ? access_user_calendar ( 'email', $partlogin[$i], $login ) : false );
-
-      // Don't email the logged in user.
-      if ( $can_email && $partlogin[$i] != $login ) {
-        set_env ( 'TZ', get_pref_setting ( $partlogin[$i], 'TIMEZONE' ) );
-        $user_language = get_pref_setting ( $partlogin[$i], 'LANGUAGE' );
-        user_load_variables ( $partlogin[$i], 'temp' );
-        if ( ! $is_nonuser_admin && $partlogin[$i] != $login &&
-          get_pref_setting ( $partlogin[$i], 'EMAIL_EVENT_DELETED' ) == 'Y' &&
-            boss_must_be_notified ( $login, $partlogin[$i] ) && !
-            empty ( $tempemail ) && $SEND_EMAIL != 'N' ) {
-          reset_language ( empty ( $user_language ) || $user_language == 'none'
-            ? $LANGUAGE : $user_language );
-          // Use WebCalMailer class.
-          $mail->WC_Send ( $login_fullname, $tempemail, $tempfullname, $name,
-            str_replace ( 'XXX', $tempfullname, translate ( 'Hello, XXX.' ) )
-             . ".\n\n" . str_replace ( 'XXX', $login_fullname,
-              translate ( 'XXX has canceled an appointment.' ) ) . "\n"
-             . str_replace ( 'XXX', $name, translate ( 'Subject XXX' ) ) . "\"\n"
-             . str_replace ( 'XXX', date_to_str ( $thisdate ),
-              translate ( 'Date XXX' ) ) . "\n"
-             . ( ! empty ( $eventtime ) && $eventtime != '-1'
-              ? str_replace ( 'XXX', display_time ( '', 2, $eventstart,
-                  get_pref_setting ( $partlogin[$i], 'TIME_FORMAT' ) ),
-                translate ( 'Time XXX' ) ) : '' ) . "\n\n",
-            // Apply user's GMT offset and display their TZID.
-            get_pref_setting ( $partlogin[$i], 'EMAIL_HTML' ), $login_email );
-        }
-      }
-    }
 
     // Instead of deleting from the database...
     // mark it as deleted by setting the status for each participant to "D"
@@ -215,6 +180,47 @@ if ( $id > 0 && empty ( $error ) ) {
 
       // Delete External users for this event
       dbi_execute ( 'DELETE FROM webcal_entry_ext_user WHERE cal_id = ?', [$id] );
+    }
+
+    for ( $i = 0, $cnt = count ( $partlogin ); $i < $cnt; $i++ ) {
+      // Log the deletion.
+      activity_log ( $id, $login, $partlogin[$i], $log_delete, '' );
+      // Check UAC.
+      $can_email = ( access_is_enabled()
+        ? access_user_calendar ( 'email', $partlogin[$i], $login ) : false );
+
+      // Don't email the logged in user.
+      if ( $can_email && $partlogin[$i] != $login ) {
+        set_env ( 'TZ', get_pref_setting ( $partlogin[$i], 'TIMEZONE' ) );
+        $user_language = get_pref_setting ( $partlogin[$i], 'LANGUAGE' );
+        user_load_variables ( $partlogin[$i], 'temp' );
+        if ( ! $is_nonuser_admin && $partlogin[$i] != $login &&
+          get_pref_setting ( $partlogin[$i], 'EMAIL_EVENT_DELETED' ) == 'Y' &&
+            boss_must_be_notified ( $login, $partlogin[$i] ) && !
+            empty ( $tempemail ) && $SEND_EMAIL != 'N' ) {
+          reset_language ( empty ( $user_language ) || $user_language == 'none'
+            ? $LANGUAGE : $user_language );
+          // Use WebCalMailer class. Embed the event as a text/calendar
+          // request (same method as creation) marked CANCELLED so that
+          // Outlook/Exchange remove the appointment automatically. For a
+          // single deleted occurrence of a repeating event, keep the plain
+          // text email (no calendar) since the event is not fully cancelled.
+          $mail->WC_Send ( $login_fullname, $tempemail, $tempfullname, $name,
+            str_replace ( 'XXX', $tempfullname, translate ( 'Hello, XXX.' ) )
+             . ".\n\n" . str_replace ( 'XXX', $login_fullname,
+              translate ( 'XXX has canceled an appointment.' ) ) . "\n"
+             . str_replace ( 'XXX', $name, translate ( 'Subject XXX' ) ) . "\"\n"
+             . str_replace ( 'XXX', date_to_str ( $thisdate ),
+              translate ( 'Date XXX' ) ) . "\n"
+             . ( ! empty ( $eventtime ) && $eventtime != '-1'
+              ? str_replace ( 'XXX', display_time ( '', 2, $eventstart,
+                  get_pref_setting ( $partlogin[$i], 'TIME_FORMAT' ) ),
+                translate ( 'Time XXX' ) ) : '' ) . "\n\n",
+            // Apply user's GMT offset and display their TZID.
+            get_pref_setting ( $partlogin[$i], 'EMAIL_HTML' ), $login_email,
+            ( $override_repeat ? '' : $id ) );
+        }
+      }
     }
   } else {
     // Not the owner of the event, but participant or noncal_admin.

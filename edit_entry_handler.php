@@ -1123,11 +1123,10 @@ if( empty( $error ) ) {
 
             $msg .= "\n\n" . $url;
           }
-          // Use WebCalMailer class.
+          // Use WebCalMailer class. Always embed the event as a
+          // text/calendar meeting request (same for create & update).
           $mail->WC_Send( $login_fullname, $tempemail,
-            $tempfullname, $name, $msg, $htmlmail, $from,
-            ( get_pref_setting( $i, 'EMAIL_ATTACH_ICS', 'N' ) == 'Y'
-              ? $id : '' ) );
+            $tempfullname, $name, $msg, $htmlmail, $from, $id );
           activity_log( $id, $login, $i, LOG_NOTIFICATION, '' );
         }
       }

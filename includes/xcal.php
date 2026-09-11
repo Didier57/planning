@@ -144,13 +144,17 @@ function search_users( $arrInArray, $varSearchValue ) {
   return -1;
 }
 
-function export_get_attendee( $id, $export ) {
+function export_get_attendee( $id, $export, $include_cancelled = false ) {
   global $EMAIL_FALLBACK_FROM, $login;
 
+  // For meeting requests (iTIP) we may need to list participants who have
+  // been removed/cancelled too (e.g. a METHOD:REQUEST cancellation email),
+  // so the client can match the attendees.
   $request = 'SELECT weu.cal_login, weu.cal_status, we.cal_create_by
     FROM webcal_entry_user weu LEFT JOIN  webcal_entry we
     ON weu.cal_id = we.cal_id
-    WHERE weu.cal_id = ? AND weu.cal_status <> \'D\'';
+    WHERE weu.cal_id = ?' . ( $include_cancelled ? '' :
+      ' AND weu.cal_status <> \'D\'' );
 
   $att_res = dbi_execute ( $request, [$id] );
 
@@ -743,7 +747,11 @@ function export_get_event_entry( $id = 'all', $attachment = false ) {
     }
     $sql .= ' ) ';
   } //end if $id=all
-  if ( $DISPLAY_UNAPPROVED == 'N' ) {
+  if ( $attachment == true ) {
+    // For email attachments we may need to export deleted (status D)
+    // events so that the calendar request can be marked CANCELLED.
+    $sql .= " AND weu.cal_status IN ('W','A','D')";
+  } else if ( $DISPLAY_UNAPPROVED == 'N' ) {
     $sql .= " AND weu.cal_status = 'A'";
   } else {
     $sql .= " AND weu.cal_status IN ('W','A')";
@@ -1176,7 +1184,7 @@ function export_ical ( $id = 'all', $attachment = false, $method = 'PUBLISH' ) {
       }
     }
     // ATTENDEE of the event
-    $attendee = export_get_attendee( $id, 'ical' );
+    $attendee = export_get_attendee( $id, 'ical', $method == 'REQUEST' );
     /* For meeting requests (METHOD:REQUEST), mark attendees as RSVP so
      * Outlook/Exchange treat them as invited participants. */
     if ( $method == 'REQUEST' ) {
