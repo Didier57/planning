@@ -1,4 +1,5 @@
 services:
+
   db:
     image: mariadb:11
     container_name: planning-db
@@ -13,9 +14,8 @@ services:
     restart: unless-stopped
 
   webcalendar:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile-php8
+    image: ghcr.io/didier57/planning:latest
+    pull_policy: always
     container_name: planning-web
     depends_on:
       - db
