@@ -134,6 +134,21 @@ if ( $id > 0 && empty ( $error ) ) {
       dbi_free_result ( $res );
     }
 
+    // Also get external participants (raw email addresses, stored in
+    // webcal_entry_ext_user). They are removed from the database below,
+    // so collect them now in order to notify them after the deletion.
+    $ext_names = $ext_emails = [];
+    $res = dbi_execute ( 'SELECT cal_fullname, cal_email FROM webcal_entry_ext_user
+  WHERE cal_id = ?', [$id] );
+    if ( $res ) {
+      while ( $row = dbi_fetch_row ( $res ) ) {
+        $ext_names[] = $row[0];
+        $ext_emails[] = ( empty ( $row[1] ) ? '' : $row[1] );
+      }
+      dbi_free_result ( $res );
+    }
+    error_log( 'del_entry: id=' . $id . ' externals=' . count ( $ext_names ) );
+
     $eventstart = date_to_epoch ( $fmtdate . $time );
     $TIME_FORMAT = 24;
 
@@ -232,6 +247,35 @@ if ( $id > 0 && empty ( $error ) ) {
         error_log( 'del_entry: not emailing ' . ( isset($partlogin[$i]) ? $partlogin[$i] : '?' )
           . ' can_email=' . ( $can_email ? 'yes' : 'no' )
           . ' is_self=' . ( $partlogin[$i] == $login ? 'yes' : 'no' ) );
+      }
+    }
+
+    // Notify external participants as well. They are invited with the same
+    // METHOD:REQUEST mechanism, so send a CANCELLED request so that
+    // Outlook/Exchange remove the appointment automatically. For a single
+    // deleted occurrence of a repeating event, keep the plain text email.
+    if ( $EXTERNAL_NOTIFICATIONS == 'Y' && $SEND_EMAIL != 'N' ) {
+      for ( $i = 0, $cnt = count ( $ext_names ); $i < $cnt; $i++ ) {
+        if ( ! empty ( $ext_names[$i] ) && ! empty ( $ext_emails[$i] ) ) {
+          $mail->WC_Send ( $login_fullname, $ext_emails[$i], $ext_names[$i],
+            $name,
+            str_replace ( 'XXX', $ext_names[$i], translate ( 'Hello, XXX.' ) )
+             . ".\n\n" . str_replace ( 'XXX', $login_fullname,
+              translate ( 'XXX has canceled an appointment.' ) ) . "\n"
+             . str_replace ( 'XXX', $name, translate ( 'Subject XXX' ) ) . "\"\n"
+             . str_replace ( 'XXX', date_to_str ( $thisdate ),
+              translate ( 'Date XXX' ) ) . "\n"
+             . ( ! empty ( $eventtime ) && $eventtime != '-1'
+              ? str_replace ( 'XXX', display_time ( '', 2, $eventstart,
+                  $TIME_FORMAT ), translate ( 'Time XXX' ) ) : '' ) . "\n\n",
+            'N', $login_email, ( $override_repeat ? '' : $id ) );
+          error_log( 'del_entry: ext send to ' . $ext_emails[$i]
+            . ' err=' . $mail->ErrorInfo() );
+        } else {
+          error_log( 'del_entry: ext skipped '
+            . ( empty ( $ext_names[$i] ) ? 'no-name' : $ext_names[$i] )
+            . ' has_email=' . ( empty ( $ext_emails[$i] ) ? 'no' : 'yes' ) );
+        }
       }
     }
   } else {

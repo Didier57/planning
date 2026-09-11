@@ -1199,10 +1199,10 @@ if( empty( $error ) ) {
 
         // Send mail notification if enabled.
         // TODO: Move this code into a function...
+        // Notifications are forced: external guests are always notified,
+        // for new events as well as updates.
         if( $EXTERNAL_NOTIFICATIONS == 'Y' && $SEND_EMAIL != 'N'
             && strlen( $ext_emails[$i] ) > 0 ) {
-          if( ( ! $newevent && isset( $EXTERNAL_UPDATES )
-              && $EXTERNAL_UPDATES == 'Y' ) || $newevent ) {
             $fmtdate = ( $timetype == 'T'
               ? date( 'Ymd', $eventstart ) : gmdate( 'Ymd', $eventstart ) );
             // Strip [\d] from duplicate Names before emailing.
@@ -1226,7 +1226,6 @@ if( empty( $error ) ) {
             // Always attach iCalendar file to external users
             $mail->WC_Send( $login_fullname, $ext_emails[$i],
               $ext_names[$i], $name, $msg, 'N', $from, $id );
-          }
         }
       }
     }
