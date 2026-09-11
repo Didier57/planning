@@ -61,14 +61,24 @@ class WebCalMailer {
   function WC_Send($from_name, $to_email,
     $to_name, $subject, $msg, $html = 'N', $from_email = '', $id = '' ) {
 
-    if( strlen( $from_email ) ) {
-      $this->mail->SetFrom ( $from_email, $from_name );
-      #$this->mail->From = $from_email;
-      #$this->mail->FromName = $from_name;
-    } else {
-      $this->mail->SetFrom ( $from_email, $from_name );
-      #$this->mail->From = $from_name;
-    }
+    // Always use the default sender address configured in the SMTP
+    // settings as the From address so the mail server accepts the
+    // connection (many servers refuse senders that do not match the
+    // authenticated SMTP user). Falls back to the passed in from_email
+    // (or a safe placeholder) only if no valid default is configured.
+    global $EMAIL_FALLBACK_FROM;
+    $sender = '';
+    if (!empty($EMAIL_FALLBACK_FROM) &&
+        PHPMailer\PHPMailer::validateAddress($EMAIL_FALLBACK_FROM))
+      $sender = $EMAIL_FALLBACK_FROM;
+    if (empty($sender) && !empty($from_email) &&
+        PHPMailer\PHPMailer::validateAddress($from_email))
+      $sender = $from_email;
+    if (empty($sender))
+      $sender = 'noreply@' . (empty($_SERVER['HTTP_HOST'])
+        ? 'localhost' : $_SERVER['HTTP_HOST']);
+
+    $this->mail->SetFrom ( $sender, $from_name );
 
     $this->mail->IsHTML( $html == 'Y' );
     $this->mail->AddAddress( $to_email, unhtmlentities( $to_name, true ) );
