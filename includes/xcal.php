@@ -1110,7 +1110,9 @@ function export_ical ( $id = 'all', $attachment = false, $method = 'PUBLISH', $s
     if ( $method == 'REQUEST' ) {
       $orgName = ( empty ( $publish_fullname ) ? $login : $publish_fullname );
       $orgName = addcslashes ( $orgName, "\54\73\134" );
-      $Vret .= "DTSTAMP:" . gmdate('Ymd\THis\Z') . "\r\n";
+      // NOTE: DTSTAMP is already emitted by export_time() – do not add a
+      // second one here (RFC 5545 §3.6.1 forbids duplicates and strict
+      // parsers like Exchange may reject the VEVENT).
       $Vret .= "SEQUENCE:" . max(0, (int)$sequence) . "\r\n";
       if ( ! empty ( $EMAIL_FALLBACK_FROM ) &&
         preg_match ( '/^[^@\s]+@[^@\s]+$/', $EMAIL_FALLBACK_FROM ) ) {
