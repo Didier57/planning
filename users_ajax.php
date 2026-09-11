@@ -430,6 +430,7 @@ function users_ajax_can_manage_users() {
 function save_user($add, $user, $lastname, $firstname, $is_admin, $enabled, $email, $password)
 {
   global $blankUserStr, $error, $invalidFirstName, $invalidLastName, $login;
+  global $EMAIL_HTML, $EMAIL_FALLBACK_FROM, $SEND_EMAIL;
 
   if (addslashes($user) != $user || strip_tags_content($user) != $user) {
     $error = 'Invalid characters in login.';
@@ -455,6 +456,44 @@ function save_user($add, $user, $lastname, $firstname, $is_admin, $enabled, $ema
       $is_admin,
       $enabled
     );
+    // Email the new user their login info, password and root URL.
+    if (!empty($email) && !empty($password) && $SEND_EMAIL != 'N') {
+      require_once 'includes/classes/WebCalMailer.php';
+      $mail = new WebCalMailer;
+      $appStr = generate_application_name();
+      $htmlmail = (empty($EMAIL_HTML) || $EMAIL_HTML != 'Y' ? 'N' : 'Y');
+      $tempName = trim($firstname . ' ' . $lastname);
+      $msg = str_replace(
+        ', XXX.',
+        (strlen($tempName) ? ', ' . $tempName . '.' : '.'),
+        translate('Hello, XXX.')
+      ) . "\n\n"
+        . translate('A new WebCalendar account has been set up for you.')
+        . "\n\n"
+        . str_replace('XXX', $user, translate('Your username is XXX.'))
+        . "\n\n"
+        . str_replace('XXX', $password, translate('Your password is XXX.'))
+        . "\n\n"
+        . str_replace(
+          'XXX',
+          $appStr,
+          translate('Please visit XXX to log in and start using your account!')
+        )
+        . "\n\n" . getServerUrl()
+        . "\n\n"
+        . translate('You may change your password after logging in the first time.')
+        . "\n\n" . translate('If you received this email in error') . "\n\n";
+      $name = $appStr . ' ' . translate('Welcome') . ': ' . $firstname;
+      $mail->WC_Send(
+        translate('Administrator', true),
+        $email,
+        $firstname . ' ' . $lastname,
+        $name,
+        $msg,
+        $htmlmail,
+        $EMAIL_FALLBACK_FROM
+      );
+    }
     activity_log(
       0,
       $login,
