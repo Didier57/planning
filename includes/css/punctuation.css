@@ -1,0 +1,40 @@
+@charset "UTF-8";
+:lang(en) blockquote, :lang(en) q {
+  quotes: "“" "”" "‘" "’";
+}
+blockquote::before {
+  content: open-quote;
+}
+blockquote::after {
+  content: close-quote;
+}
+.brackets::before {
+  content: '[';
+}
+.brackets::after {
+  content: ']';
+}
+.colon::after {
+  content: ': ';
+}
+.dblHyphens::before {
+  content: '-- ';
+}
+.dblHyphens::after {
+  content: ' --';
+}
+.ellipsis {
+  text-overflow: ellipsis;
+}
+._hyphen::before {
+  content: '-';
+}
+.hyphen_::after {
+  content: '-';
+}
+.parentheses::before {
+  content: ' (';
+}
+.parentheses::after {
+  content: ') ';
+}

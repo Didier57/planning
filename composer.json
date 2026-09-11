@@ -1,0 +1,47 @@
+{
+  "name": "k5n/webcalendar",
+  "description": "Multi-user web-based calendar app",
+  "homepage": "https://k5n.us/webcalendar/",
+  "license": "GPL-2.0-only",
+  "type": "project",
+  "version": "1.9.23",
+  "authors": [
+    {
+      "name": "Craig Knudsen",
+      "email": "craig@k5n.us",
+      "homepage": "https://k5n.us",
+      "role": "Project Maintainer / Developer"
+    }
+  ],
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": {
+      "*": "source"
+    },
+    "platform": {
+      "php": "8.2.0"
+    },
+    "process-timeout": 0,
+    "sort-packages": true,
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  },
+  "prefer-stable": true,
+  "require": {
+    "php": "^8.2",
+    "components/jquery": "3.5.*",
+    "mcp/sdk": "^0.7.1",
+    "phpmailer/phpmailer": "7.0.*",
+    "tinymce/tinymce": "^7.9.3",
+    "twbs/bootstrap": "4.6.*",
+    "twbs/bootstrap-icons": "1.13.*"
+  },
+  "require-dev": {
+    "components/normalize.css": "^3.0",
+    "friendsofphp/php-cs-fixer": "^3.86",
+    "phpstan/phpstan": "^2.0",
+    "phpunit/phpunit": "9.6.*",
+    "squizlabs/php_codesniffer": "^4.0"
+  }
+}

@@ -1,0 +1,316 @@
+<?php
+
+require_once 'includes/translate.php';
+require_once 'includes/classes/WebCalendar.php';
+
+$WebCalendar = new WebCalendar( __FILE__ );
+
+require_once 'includes/config.php';
+require_once 'includes/dbi4php.php';
+require_once 'includes/formvars.php';
+require_once 'includes/functions.php';
+
+session_name(getSessionName());
+harden_php_session();
+@session_start();
+
+foreach ( $_SESSION as $key => $value ) {
+  $dummy[$key] = $value; // Copy to a dummy array.
+}
+if ( ! empty ( $dummy ) ) {
+  foreach ( $dummy as $key => $value ) {
+    if ( substr ( $key, 0, 6 ) == 'webcal' )
+      unset ( $_SESSION[$key] );
+  }
+}
+
+$WebCalendar->initializeFirstPhase();
+
+require_once "includes/$user_inc";
+require_once 'includes/access.php';
+require_once 'includes/gradient.php';
+
+$WebCalendar->initializeSecondPhase();
+
+load_global_settings();
+
+// Set this true to show "no such user" or "invalid password" on login failures.
+// NOTE: this used '=' (assignment) instead of '==', which unintentionally
+// enabled failure-reason disclosure (user enumeration) on any non-empty mode.
+$showLoginFailureReason = (!empty($settings['mode']) && $settings['mode'] == 'dev');
+$message = '';
+
+if ( ! empty ( $last_login ) )
+  $login = '';
+
+if ( empty ( $webcalendar_login ) )
+  $webcalendar_login = '';
+
+if ( ! empty ( $REMEMBER_LAST_LOGIN ) && $REMEMBER_LAST_LOGIN == 'Y' && empty ( $login ) )
+  $last_login = $login = $webcalendar_login;
+
+load_user_preferences ( 'guest' );
+
+$WebCalendar->setLanguage();
+
+// Look for action=logout.
+$logout = false;
+$action = getGetValue('action');
+if (!empty($action) && $action == 'logout') {
+  if (empty($CSRF_PROTECTION) || $CSRF_PROTECTION != 'N') {
+    if (empty($_REQUEST['csrf_form_key']) || empty($_SESSION['csrf_form_key'])) {
+      die_miserable_death (translate('Fatal Error') . ': '
+         . translate('Invalid form request'));
+    }
+    $formKey = $_REQUEST['csrf_form_key'];
+    if ($formKey == $_SESSION['csrf_form_key'] && !empty($_SESSION['csrf_form_key'])) {
+      // Okay to proceed
+    } else {
+      die_miserable_death ( translate ( 'Fatal Error' ) . ': '
+         . translate ( 'Invalid form request' ) );
+    }
+  }
+  $logout = true;
+  $return_path = '';
+  // Delete this device's remember-me token from the DB.
+  if (!empty($_COOKIE['webcalendar_session'])) {
+    $parts = explode('|', decode_string($_COOKIE['webcalendar_session']));
+    if (!empty($parts[1]) && strpos($parts[1], 'tok:') === 0) {
+      $token = substr($parts[1], 4);
+      $token_hash = hash('sha256', $token);
+      $pref_name = 'REMEMBER_TOKEN_' . substr($token_hash, 0, 8);
+      dbi_execute('DELETE FROM webcal_user_pref WHERE cal_login = ?'
+        . ' AND cal_setting = ?', [$parts[0], $pref_name]);
+    }
+  }
+  sendCookie('webcalendar_session', '', 0);
+  sendCookie('webcalendar_login', '', 0);
+  sendCookie('webcalendar_last_view', '', 0);
+  $message = translate('You have been logged out.');
+} else
+if (empty($return_path)) {
+  // See if a return path was set.
+  $return_path = get_last_view(false);
+}
+
+if (!empty($return_path)) {
+  $url = $return_path = clean_whitespace($return_path);
+} else {
+  $url = 'index.php';
+}
+
+// If Application Name is set to "Title" then get translation.
+// If not, use the Admin defined Application Name.
+$appStr = generate_application_name();
+
+$login = getPostValue('login');
+$password = getPostValue('password');
+$remember = getPostValue('remember');
+
+// Calculate path for cookie.
+if (empty($PHP_SELF)) {
+  $PHP_SELF = $_SERVER['PHP_SELF'];
+}
+
+$cookie_path = str_replace('login.php', '', $PHP_SELF);
+
+if ($single_user == 'Y' || $use_http_auth) {
+  // No login for single-user mode or when using HTTP authorization.
+  do_redirect('index.php');
+} else {
+  if (!empty($login) && !$logout) {
+    $login = trim($login);
+    $badLoginStr = translate('Illegal characters in login XXX.');
+
+    if ($login != addslashes($login))
+      die_miserable_death(
+        str_replace('XXX', htmlentities($login), $badLoginStr)
+      );
+
+    // Brute-force throttle: refuse to even check the password once a login has
+    // accumulated too many recent failures. This is a temporary, per-account
+    // window (it auto-expires), trading a small account-lockout-DoS risk for
+    // protection against online password guessing. cal_login is VARCHAR(25),
+    // so the attempted login is truncated to match what is stored in the log.
+    $logLogin = substr($login, 0, 25);
+    $loginMaxFailures = 10;
+    $loginFailWindow = 900; // 15 minutes
+
+    if (empty($password)) {
+      if (empty($error) && $showLoginFailureReason) {
+        $error = translate('You must provide a password.');
+      } else if (empty($error)) {
+        $error = translate('Invalid login');
+      }
+    } else if (login_recent_failure_count($logLogin, $loginFailWindow) >= $loginMaxFailures) {
+      $error = translate('Too many failed login attempts. Please try again later.');
+      echo "ERROR: $error"; exit;
+    } else if (user_valid_login($login, $password)) {
+      // Prevent session fixation: a fresh session id is issued on every
+      // successful authentication so a pre-set/fixed id cannot be reused.
+      if (session_status() === PHP_SESSION_ACTIVE)
+        session_regenerate_id(true);
+      user_load_variables($login, '');
+
+      // Generate a random remember-me token and store its hash in the DB.
+      // Each login (device) gets its own token so they can be
+      // independently revoked without affecting other sessions.
+      $token = bin2hex(random_bytes(32));
+      $token_hash = hash('sha256', $token);
+      $pref_name = 'REMEMBER_TOKEN_' . substr($token_hash, 0, 8);
+      dbi_execute('INSERT INTO webcal_user_pref (cal_login, cal_setting, cal_value)'
+        . ' VALUES (?, ?, ?)', [$login, $pref_name, $token_hash]);
+      $encoded_login = encode_string($login . '|tok:' . $token);
+      // If $remember, set login to expire in 365 days.
+      $timeStr = (!empty($remember) && $remember == 'yes'
+        ? time() + 31536000 : 0);
+      sendCookie('webcalendar_session', $encoded_login, $timeStr, $cookie_path);
+
+      // The cookie "webcalendar_login" records the last calendar login. It is
+      // not a security risk to have it un-encoded since it is not used to
+      // allow logins within this app. It is used to load user preferences on
+      // the login page (before anyone has logged in) if $REMEMBER_LAST_LOGIN
+      // is set to "Y" (in admin.php).
+      sendCookie('webcalendar_login', $login, $timeStr, $cookie_path);
+
+      if (!empty($GLOBALS['newUserUrl'])) {
+        $url = $GLOBALS['newUserUrl'];
+      }
+
+      do_redirect($url);
+    } else {
+      // Invalid login. Always record the failure FIRST (for audit and for the
+      // brute-force throttle above). The attempted login is stored in
+      // cal_user_cal so it can be counted per-account; the IP is kept in the
+      // message text. Previously this log call was unreachable in production
+      // because the early "echo ERROR; exit" ran before it.
+      activity_log(
+        0,
+        'system',
+        $logLogin,
+        LOG_LOGIN_FAILURE,
+        str_replace(
+          ['XXX', 'YYY'],
+          [$login, $_SERVER['REMOTE_ADDR']],
+          translate('Activity login failure')
+        )
+      );
+
+      if (empty($error) || !$showLoginFailureReason) {
+        $error = translate('Invalid login', true);
+        echo "ERROR: $error"; exit;
+      }
+    }
+  } else {
+    // No login info... just present empty login page.
+    //$error = "Start";
+  }
+  // Delete current user.
+  sendCookie('webcalendar_session', '', 0, $cookie_path);
+  // In older versions, the cookie path had no trailing slash and NS 4.78
+  // thinks "path/" and "path" are different, so the line above does not
+  // delete the "old" cookie. This prohibits the login. So we also delete the
+  // cookie with the trailing slash removed.
+  if (substr($cookie_path, -1) == '/') {
+    sendCookie('webcalendar_session', '', 0, substr($cookie_path, 0, -1));
+  }
+}
+echo send_doctype($appStr);
+
+echo $ASSETS;
+
+// Print custom header (since we do not call print_header function).
+if ( ! empty ( $CUSTOM_SCRIPT ) && $CUSTOM_SCRIPT == 'Y' ) {
+  echo load_template ( $login, 'S' );
+}
+?>
+</head>
+<body id="login">
+<div class="container">
+<?php
+// Print custom header (since we do not call print_header function).
+if ( ! empty ( $CUSTOM_HEADER ) && $CUSTOM_HEADER == 'Y' ) {
+  echo load_template ( $login, 'H' );
+}
+?>
+<div id="login-container">
+<div class="row justify-content-center">
+  <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+  <form id="login-form" class="form" action="login.php" method="post">
+    <div class="text-center">
+      <h3><?php echo htmlentities($appStr); ?> Login</h3>
+    </div>
+  <?php if ( ! empty ( $message )) { ?>
+    <div class="alert alert-info" role="alert">
+      <?php echo $message; ?>
+    </div>
+  <?php } ?>
+  <?php if ( ! empty ( $error )) { ?>
+    <div class="alert alert-warning" role="alert">
+      <?php echo $error; ?>
+    </div>
+  <?php } ?>
+    <div class="form-group">
+      <label for="user" class="text-info">Username:</label><br>
+      <input type="text" name="login" id="user" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="password" class="text-info">Password:</label><br>
+      <input type="password" name="password" id="password" class="form-control">
+    </div>
+    <div class="form-group form-check">
+      <input type="checkbox" class="form-check-input" id="remember-me" name="remember" value="yes">
+      <label class="form-check-label" for="remember-me">Remember me</label>
+    </div>
+    <div class="form-group text-center">
+      <button class="btn btn-primary" type="submit"><?php
+ etranslate ( 'Submit' )?></button>
+    </div>
+
+    <div id="public-calendar-list">
+    <?php // Non-user calendars
+      $nulist = get_nonuser_cals();
+      $remotelist = get_nonuser_cals('', true);
+      $cals = array_merge($nulist, $remotelist);
+      $accessStr = translate ( 'Access XXX calendar' );
+      for ( $i = 0, $cnt = count ( $cals ); $i < $cnt; $i++ ) {
+        if ( $cals[$i]['cal_is_public'] == 'Y' ) {
+          echo '<li id="form_' . $cals[$i]['cal_login'] . '" class="form-group">' .
+            '<a class="nav" href="nulogin.php?login=' . $cals[$i]['cal_login'] . '">'
+            . str_replace ( 'XXX', $cals[$i]['cal_fullname'], $accessStr )
+            . '</a></li>';
+        }
+      }
+      echo "</div>\n";
+      // Self registration
+      if ( ! empty ( $ALLOW_SELF_REGISTRATION ) && $ALLOW_SELF_REGISTRATION == 'Y' ) {
+        // We can limit what domain is allowed to self register.
+        // $self_registration_domain should have this format  "192.168.220.0:255.255.240.0";
+        $valid_ip = validate_domain();
+
+        if ( ! empty ( $valid_ip ) ) {
+          echo '<div id="register-link" class="form-group"><a href="register.php">'
+           . translate ( 'Not yet registered? Register here!' ) . '</a></div>';
+        }
+      }
+    ?>
+
+  </form>
+  </div>
+</div>
+</div>
+
+<br>
+
+<?php
+echo '<div id="webcalendarVersion"><a href="' . $PROGRAM_URL . '" target="_blank" id="programname">'
+    . $PROGRAM_NAME . '</a></div>';
+
+// Print custom trailer (since we do not call print_trailer function).
+if ( ! empty ( $CUSTOM_TRAILER ) && $CUSTOM_TRAILER == 'Y' ) {
+  echo load_template ( $login, 'T' );
+}
+?>
+</div>
+</body>
+</html>

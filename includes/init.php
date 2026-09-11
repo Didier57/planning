@@ -1,0 +1,457 @@
+<?php
+/**
+ * Does various initialization tasks and includes all needed files.
+ *
+ * This page is included by most WebCalendar pages as the only include file.
+ * This greatly simplifies the other PHP pages since they don't need to worry
+ * about what files it includes.
+ *
+ * <b>Comments:</b>
+ * The following scripts do not use this file:
+ *   - login.php
+ *   - upcoming.php
+ *   - tools/send_reminders.php
+ *
+ * How to use:
+ *   1. call include_once 'includes/init.php' at the top of your script.
+ *   2. call any other functions or includes not in this file that you need
+ *   3. call the print_header function with proper arguments
+ *
+ * What gets called:
+ *   - require_once "includes/$user_inc";
+ *   - require_once 'includes/access.php';
+ *   - require_once 'includes/assert.php';
+ *   - require_once 'includes/classes/Event.php';
+ *   - require_once 'includes/classes/RptEvent.php';
+ *   - require_once 'includes/classes/WebCalendar.php';
+ *   - require_once 'includes/config.php';
+ *   - require_once 'includes/dbi4php.php';
+ *   - require_once 'includes/formvars.php';
+ *   - require_once 'includes/functions.php';
+ *   - require_once 'includes/site_extras.php';
+ *   - require_once 'includes/translate.php';
+ *   - require_once 'includes/validate.php';
+ *
+ * Also, for month.php, day.php, week.php, week_details.php:
+ *   - {@link send_no_cache_header()};
+ *
+ * @author Craig Knudsen <cknudsen@cknudsen.com>
+ * @copyright Craig Knudsen, <cknudsen@cknudsen.com>, http://k5n.us/webcalendar
+ * @license https://gnu.org/licenses/old-licenses/gpl-2.0.html GNU GPL
+ * @package WebCalendar
+ */
+
+ if( empty( $_SERVER['PHP_SELF'] )
+     || ( ! empty( $_SERVER['PHP_SELF'] )
+       && preg_match( '/\/includes\//', $_SERVER['PHP_SELF'] ) ) ) {
+  die( 'You cannot access this file directly!' );
+ }
+
+require_once 'includes/translate.php';
+require_once 'includes/classes/Event.php';
+require_once 'includes/classes/RptEvent.php';
+require_once 'includes/classes/WebCalendar.php';
+
+$WebCalendar = new WebCalendar( __FILE__ );
+
+require_once 'includes/assert.php';
+require_once 'includes/config.php';
+require_once 'includes/dbi4php.php';
+require_once 'includes/formvars.php';
+require_once 'includes/functions.php';
+require_once 'includes/mcp-loader.php';
+
+$WebCalendar->initializeFirstPhase();
+
+require_once "includes/$user_inc";
+require_once 'includes/access.php';
+require_once 'includes/gradient.php';
+require_once 'includes/site_extras.php';
+require_once 'includes/validate.php';
+
+$WebCalendar->initializeSecondPhase();
+
+// Return the toplevel URL (no path) of the current URL.
+function get_server_top_url () {
+  if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+     $url = "https://";
+  else
+     $url = "http://";
+  // Append the host(domain name, ip) to the URL.
+  $url.= $_SERVER['HTTP_HOST'];
+  return $url;
+}
+
+
+/**
+  * Send HTTP headers.  Would be nice to make some of these configurable
+  * in the admin System Settings.
+  */
+function send_http_headers () {
+  global $CSP, $PROGRAM_DATE, $PROGRAM_VERSION;
+
+  $csp = empty($CSP) || in_array($CSP, ['none', 'same', 'any']) ? $CSP : 'none';
+
+  // Prevent click-jacking by including a "frame-breaker" script in each page that should not be framed.
+  // Admin can override CSP setting (default is 'none') in Admin Settings
+  // Source: https://cheatsheetseries.owasp.org/cheatsheets/Clickjacking_Defense_Cheat_Sheet.html
+  Header('X-CSP-Value: ' . $csp);
+  if ($csp == 'none') {
+    Header("Content-Security-Policy: frame-ancestors 'none'");
+    // WebCalendar cannot be loaded in a frame
+    // Options for this cookie: deny, sameorigin, allow-from
+    Header("X-Frame-Options: deny");
+  } else if ($csp == 'same') {
+    Header("Content-Security-Policy: frame-ancestors 'self'");
+    Header("X-Frame-Options: sameorigin");
+  } else if ($csp == 'any') {
+    // No restrictions
+    Header("Content-Security-Policy: frame-ancestors *");
+  }
+
+  // Include WebCalendar version in HTTP header
+  Header('WebCalendar-Version: ' . ltrim($PROGRAM_VERSION, 'v'));
+  Header('WebCalendar-Date: ' . $PROGRAM_DATE);
+
+  // Marker used by the server to indicate that the MIME types advertised in the
+  // Content-Type headers should be followed and not be changed.
+  // NOTE: Some web servers (e.g. apache2) set this for us, so users may get 2 of these.
+  Header("X-Content-Type-Options: nosniff");
+
+  // Set the Content Security Policy.  WebCalendar specifically bundles required
+  // components like jQuery and Bootstrap so that external resources don't need
+  // to be loaded.  However, if an admin user creates a custom header that loads
+  // external content, this may break.
+  // More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+  // TODO: Fix this.  It seems to break CSS, images or something.  I'm trying
+  // to restrict all content to one server, but it's blocking more than it should.
+  //Header("Content-Security-Policy: default-src " . get_server_top_url() .
+  //  "; img-src *; style-src *");
+
+  // Always use UTF-8 for Content-Type. Many translation files still declare
+  // iso-8859-1 but all database connections now use utf8mb4, so the browser
+  // must interpret the output as UTF-8 to display characters correctly.
+  header('Content-Type: text/html; charset=UTF-8');
+}
+
+/**
+ * Prints the HTML header and opening HTML body tag.
+ *
+ * @param array  $includes     Array of additional files to include referenced
+ *                             from the includes directory
+ * @param string $HeadX        Data to be printed inside the head tag (meta,
+ *                             script, etc)
+ * @param string $BodyX        Data to be printed inside the Body tag (onload
+ *                             for example)
+ * @param bool   $disableCustom Do not include custom header? (useful for small
+ *                             popup windows, such as color selection)
+ * @param bool   $disableStyle Do not include the standard css?
+ * @param bool   $disableRSS   Do not include the RSS link
+ * @param bool   $IGNORED      Parameter not used (ignored)
+ * @param bool   $disableUTIL  Do not include the util.js link
+ */
+function print_header ( $includes = '', $HeadX = '', $BodyX = '',
+  $disableCustom = false, $disableStyle = false, $disableRSS = false,
+  $IGNORED = false, $disableUTIL = false ) {
+  global $BGCOLOR, $browser, $charset, $CSP, $CUSTOM_HEADER, $CUSTOM_SCRIPT,
+  $DISABLE_POPUPS, $DISPLAY_TASKS, $DISPLAY_WEEKENDS, $FONTS, $friendly,
+  $is_admin, $LANGUAGE, $login, $MENU_ENABLED, $MENU_THEME, $OTHERMONTHBG,
+  $POPUP_FG, $PUBLIC_ACCESS, $PUBLIC_ACCESS_FULLNAME, $REQUEST_URI, $SCRIPT,
+  $self, $TABLECELLFG, $TEXTCOLOR, $THBG, $THFG, $TODAYCELLBG, $WEEKENDBG,
+  $ASSETS;
+
+  $id = '';
+
+  ob_start ();
+
+  if ( is_dir ( 'includes' ) ) {
+    $incdir = 'includes';
+  } elseif ( is_dir ( '../includes' ) ) {
+    $incdir = '../includes';
+  }
+
+  $cs_ret = $lang = '';
+
+  // Remember this view if the file is a view_x.php script.
+  if( ! strstr( $REQUEST_URI, 'view_entry' ) )
+    remember_this_view( true );
+
+  // Menu control.
+  if( ! empty( $friendly ) || $disableCustom )
+    $MENU_ENABLED = 'N';
+
+  $appStr = generate_application_name( true );
+  // Include includes/css/print_styles.css as a media="print" stylesheet.
+  // When the user clicks on the "Printer Friendly" link, $friendly will be
+  // non-empty, including this as a normal stylesheet so they can see how it
+  // will look when printed. This maintains backwards-compatibility for browsers
+  // that don't support media="print" stylesheets.
+  $cs_ar = ['css/styles.css', 'css/print_styles.css'];
+  $js_ar = [];
+
+  $ret = send_doctype( $appStr );
+// Use "punctuation.css" to start getting punctuation out of the code to where the translators can get at it.
+  //  <link href="' . $incdir . '/css/punctuation.css" rel="stylesheet">';
+
+  send_http_headers ();
+
+  if (empty($CSP) || $CSP == 'none') {
+    $ret .= "\n<style id=\"antiClickjack\">\n  body{display:none !important;}\n</style>\n" .
+      "<script type=\"text/javascript\">\n" .
+      "  if (self.location.hostname === top.location.hostname) {\n" .
+      "      var antiClickjack = document.getElementById(\"antiClickjack\");\n" .
+      "      antiClickjack.parentNode.removeChild(antiClickjack);\n" .
+      "  } else {\n" .
+      "      top.location = self.location;\n" .
+      "  }\n" .
+      "</script>\n";
+    }
+
+
+  $ret .= $ASSETS;
+
+  if( ! $disableUTIL )
+    $js_ar[] = 'js/util.js';
+
+  if( ! empty( $js_ar ) )
+    foreach( $js_ar as $j ) {
+      $ret .= '
+    <script src="includes/' . $j . '" defer></script>';
+    }
+
+  // Any other includes?
+  if( is_array( $includes ) ) {
+    foreach( $includes as $inc ) {
+      //$cs_ret .= '<!-- inc "' . $inc . '" INCLUDED -->' . "\n";
+      if ( $inc == 'JQUERY' ) {
+        // Ignore since we handled it above
+        //$cs_ret .= '<!-- JQUERY INCLUDED -->' . "\n";
+      } if( stristr( $inc, '.css' ) ) {
+        // Not added to $cs_ar because I think we want these,
+        // even if $disableStyle.
+        $cs_ret .= '
+    <link href="includes/' . $inc . '" rel="stylesheet">';
+      } elseif( substr( $inc, 0, 12 ) == 'js/popups.js'
+          && ! empty( $DISABLE_POPUPS ) && $DISABLE_POPUPS == 'Y' ) {
+        // Don't load popups.js if DISABLE_POPUPS.
+      } else {
+        $arinc = explode( '/', $inc );
+        $ret .= '
+    <script src="';
+
+        if( stristr( $inc, '/true' ) ) {
+          $i = 'includes';
+          foreach( $arinc as $a ) {
+            if( $a == 'true' )
+              break;
+
+            $i .= '/' . $a;
+          }
+          $ret .= $i . '?' . filemtime( $i );
+        } else {
+          $ret .= 'js_cacher.php?inc=' . $inc;
+        }
+        $ret .= '" defer></script>';
+      }
+    }
+  }
+
+  $tmp   = '" rel="alternate" title="' . $appStr . ' - Unapproved Events - ';
+  $tmp_f = 'rss_unapproved.php';
+  $tmp_l = '
+    <link type="application/rss+xml" href="';
+
+  // Add RSS feed for unapproved events if approvals are required
+  if( $GLOBALS['REQUIRE_APPROVALS'] == 'Y'
+       && $login != '__public__' && $is_admin ) {
+    // Prh .. fix theme change for auth_http which does not set webcal*login
+    //        variables.
+    //
+    //        Pass the logged in user id as login=<whatever> on the URL
+    //        Add css_cache=<cookie setting> to change the URL signature
+    //        to force a fetch from the server rather than from the
+    //        browser cache when the style changes.
+    // Note: we could do all the queries to add the RSS feed for every user
+    // the current user has permissions to approve for, but I'm thinking
+    // that's too many db requests to repeat on every page.
+
+    $ret .= $tmp_l . $tmp_f . '?' . filemtime( $tmp_f ) . $tmp . $login . '">'
+     . ( $is_admin && $PUBLIC_ACCESS == 'Y' ? $tmp_l . $tmp_f . '?user=public&'
+     . filemtime( $tmp_f ) . $tmp . translate( $PUBLIC_ACCESS_FULLNAME )
+     . '">' : '' );
+  }
+  if( $is_admin ) {
+    $tmp_f = 'rss_activity_log.php';
+    $ret .= $tmp_l . $tmp_f . '?' . filemtime( $tmp_f ) . '" rel="alternate"'
+     . ' title="' . $appStr . ' - ' . translate('Activity Log') . '">';
+  }
+  if( ! $disableStyle ) {
+    // Check the CSS version for cache clearing if needed.
+    if( isset( $_COOKIE['webcalendar_csscache'] ) )
+      $webcalendar_csscache = $_COOKIE['webcalendar_csscache'];
+    else {
+      $webcalendar_csscache = 1;
+      sendCookie( 'webcalendar_csscache', $webcalendar_csscache );
+    }
+    $ret .= '
+    <link href="css_cacher.php?login='
+     . ( empty( $_SESSION['webcal_tmp_login'] )
+       ? $login : $_SESSION['webcal_tmp_login'] )
+     . '&amp;css_cache=' . $webcalendar_csscache . '" rel="stylesheet">';
+    foreach( $cs_ar as $c ) {
+      $i = 'includes/' . $c;
+      $ret .= '
+    <link href="' . $i . '" rel="stylesheet"'
+       . ( $c == 'css/print_styles.css' && empty( $friendly )
+         ? ' media="print"' : '' ) . '>' . "\n";
+    }
+  }
+  echo $ret . $cs_ret
+  // Add custom script/stylesheet if enabled.
+   . ( $CUSTOM_SCRIPT == 'Y' && ! $disableCustom
+     ? load_template( $login, 'S' ) : '' )
+  // Add RSS feed if publishing is enabled.
+   . ( ! empty( $GLOBALS['RSS_ENABLED'] ) && $GLOBALS['RSS_ENABLED'] == 'Y'
+       && $login == '__public__' || ( ! empty( $GLOBALS['USER_RSS_ENABLED'] )
+       && $GLOBALS['USER_RSS_ENABLED'] == 'Y' ) && ! $disableRSS ?
+    $tmp_l . 'rss.php?' . filemtime( 'rss.php' )
+      /* TODO: single-user mode, etc. */
+     . ( $login != '__public__' ? '&user=' . $login : '' )
+     . '" rel="alternate" title="' . $appStr . ' [RSS 2.0]">' : '' )
+  // Do we need anything else inside the header tag?
+  // $HeadX moved here because linked CSS may override standard styles.
+   . "
+    $HeadX" . '
+    <link type="image/x-icon" href="favicon.ico?'
+   . filemtime( 'favicon.ico' ) . '" rel="shortcut icon">
+  </head>
+  <body id="';
+
+  $id = preg_replace ( '/.php/', '',
+    substr ( $self, strrpos ( $self, '/' ) + 1 ) );
+
+  // Body id mirrors the script name with underscores removed and forced to
+  // lowercase (admin.php -> "admin", view_t.php -> "viewt"). The page-specific
+  // selectors in includes/css/styles.css (#admin, #pref, #day, #viewt, ...) are
+  // lowercase, so this MUST stay lowercase for them to match. (Previously this
+  // used ucfirst() to produce UpperCamelCase ids, which silently disabled all
+  // of that page-specific CSS since CSS id selectors are case-sensitive.)
+  $id = strtolower ( str_replace ( '_', '', $id ) );
+
+  echo $id .
+    ( translate ( 'direction' ) === 'rtl' ? '" dir="rtl"' : '"' )
+    // Add any extra parts to the <body> tag.
+    . " $BodyX>\n"
+    // Add custom header if enabled.
+    . ( $CUSTOM_HEADER === 'Y' && ! $disableCustom
+      ? load_template ( $login, 'H' ) : '' );
+
+  // HTML includes needed for the top menu.
+  if( $MENU_ENABLED == 'Y' ) {
+    require_once 'menu.php';
+  }
+  // TODO convert this to return value.
+  echo '<div class="container-fluid">';
+}
+
+/**
+ * Returns the common trailer.  (DOES NOT print it, unlike print_header.)
+ *
+ * @param bool $include_nav_links Should the standard navigation links be
+ *                                included in the trailer?
+ * @param bool $closeDb           Close the database connection when finished?
+ * @param bool $disableCustom     Disable the custom trailer the administrator
+ *                                has setup? (This is useful for small popup
+ *                                windows and pages being used in an iframe.)
+ */
+function print_trailer( $include_nav_links = true, $closeDb = true,
+  $disableCustom = false ) {
+  global $ALLOW_VIEW_OTHER, $c, $cat_id, $CATEGORIES_ENABLED, $CUSTOM_TRAILER,
+  $DATE_FORMAT_MD, $DATE_FORMAT_MY, $DEMO_MODE, $DISPLAY_TASKS, $friendly,
+  $DISPLAY_TASKS_IN_GRID, $fullname, $GROUPS_ENABLED, $has_boss, $is_admin,
+  $is_nonuser, $is_nonuser_admin, $LAYER_STATUS, $login, $login_return_path,
+  $MENU_DATE_TOP, $MENU_ENABLED, $NONUSER_ENABLED, $PUBLIC_ACCESS,
+  $PUBLIC_ACCESS_CAN_ADD, $PUBLIC_ACCESS_FULLNAME, $PUBLIC_ACCESS_OTHERS,
+  $readonly, $REPORTS_ENABLED, $REQUIRE_APPROVALS, $single_user, $STARTVIEW,
+  $SQLLOG, $thisday, $thismonth, $thisyear, $use_http_auth, $user, $views, $WEEK_START;
+
+  $ret = '';
+
+  // If menu enabled, include JS for Bootstrap v4 submenu.
+  // TODO: Get the submenu working to allow for more dates in the menu.
+  if ($MENU_ENABLED != 'N') {
+    $ret .= '<script src="./includes/js/menu.js"></script>' . "\n";
+  }
+  // The Month/Week/Year selectors live in the top menu by default. Put them
+  // here instead when the admin asked for that, or when the top menu is
+  // disabled entirely and so has nowhere to hold them. Installs predating the
+  // MENU_DATE_TOP setting have no webcal_config row for it, so default to top.
+  if( $include_nav_links && ! $friendly
+    && ( $MENU_ENABLED == 'N' || ( $MENU_DATE_TOP ?? 'Y' ) == 'N' ) ) {
+    require_once 'date_selectors.php';
+    $ret .= '<nav id="dateselector"'
+     . ' class="navbar navbar-expand-lg navbar-light bg-light">' . "\n"
+     . date_selectors_html() . "</nav>\n";
+  }
+  if( $include_nav_links && ! $friendly ) {
+    if( $MENU_ENABLED == 'N' )
+      require_once 'includes/trailer.php';
+  }
+
+  $ret .= ( empty( $tret ) ? '' : $tret ) // Data from trailer.
+  // Add custom trailer if enabled.
+  . ( $CUSTOM_TRAILER == 'Y' && ! $disableCustom && isset( $c )
+    ? load_template( $login, 'T' ) : '' );
+
+  if( $closeDb ) {
+    if( isset( $c ) )
+      dbi_close( $c );
+
+    unset( $c );
+  }
+
+  // Only enable CKEditor on the following pages.  Some pages are expecting plain
+  // text and HTML will cause issues.
+  $pagesWithFullEditor = [ 'edit_entry.php', 'docadd.php' ];
+  $includeHtmlEditor = ( ! empty ( $GLOBALS['ALLOW_HTML_DESCRIPTION'] ) ) &&
+    $GLOBALS['ALLOW_HTML_DESCRIPTION'] == 'Y' &&
+    in_array ( $GLOBALS['SCRIPT'], $pagesWithFullEditor );
+
+  $debug = '';
+  if (dbi_get_debug()) {
+    $debug = '<blockquote style="border:1px solid #ccc; background:#eee;">'
+      . '<b>Executed queries:' . dbi_num_queries()
+      . '&nbsp;&nbsp; <b>Cached queries:</b>' . dbi_num_cached_queries()
+      . "<br><ol>\n";
+    $log = $GLOBALS['SQLLOG'];
+    $logcnt = count ( $log );
+    for ( $i = 0; $i < $logcnt; $i++ ) {
+      $debug .= '<li>' . $log[$i] . '</li>';
+    }
+    $debug .= "</ol>\n</blockquote>\n";
+  }
+  return $ret .
+    '<!-- ' . $GLOBALS['PROGRAM_NAME'] . '     ' . $GLOBALS['PROGRAM_URL'] . ' -->' .
+    ( $includeHtmlEditor ?
+    "\n" . '<script src="pub/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+    tinymce.init({
+      selector: \'textarea\',
+      promotion: false,
+      plugins: \'lists link table  code autolink\',
+      toolbar: \'undo redo styles bold italic alignleft aligncenter alignright outdent indent numlist bullist link table code\',
+      license_key: \'gpl\'
+    });
+    </script>' . "\n" : '' ) .
+
+    // Adds an easy link to validate the pages.
+    ( $DEMO_MODE == 'Y' ? '
+    <p><a href="http://validator.w3.org/check?uri=referer">'
+     . '<img src="http://w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" '
+     . 'class="valid"></a></p>' : '' )/* Close HTML page properly. */ . '
+    </div>' . $debug .
+    '</body>
+  </html>';
+}
+
+?>

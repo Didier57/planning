@@ -1,0 +1,1438 @@
+/**
+ * Static CSS styles used in WebCalendar.
+ *
+ * @author Craig Knudsen <cknudsen@cknudsen.com>
+ * @copyright Craig Knudsen, <cknudsen@cknudsen.com>, http://k5n.us/webcalendar
+ * @license https://gnu.org/licenses/old-licenses/gpl-2.0.html GNU GPL
+ * @package WebCalendar
+ */
+
+html {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  /* These are to prevent some 'spam site' complaints. */
+  background-color: #FFFFFE;
+  color: #000001;
+  hanging-punctuation: first last;
+}
+*,
+*::before,
+*::after {
+  -webkit-box-sizing: inherit;
+          box-sizing: inherit;
+}
+html,
+body {
+  position:relative;
+  width:100%;
+  margin:0;
+  padding:0;
+  padding-bottom: 0.5em;
+}
+body{
+  background-color: var(--bgcolor);
+  color: var(--textcolor);
+  font: var(--def-font-size)/1.5 var(--def-font-family);
+}
+
+del {
+  text-decoration: line-through 2px var(--textcolor);
+}
+
+div.container-fluid, div.container, nav.navbar,
+  div.dropdown-menu, ul.dropdown-menu, .list-group, .list-group-item,
+  .sectioncontent {
+  background-color: var(--bgcolor)!important;
+  color: var(--textcolor)!important;
+}
+div.dropdown-divider {
+  border-top: 1px solid var(--box-default-color)!important;
+}
+li.nav-link {
+  border-top: 1px solid var(--box-default-color)!important;
+}
+/*
+Can't recall why this was added, but it makes the save button appear too far down
+to be seen in some forms.  For now, commenting out.  Probably delete this later...
+body, div.container-fluid, div.container {
+  min-height: 100%;
+  min-height: 100vh;
+}
+*/
+label.text-info {
+  color: var(--textcolor)!important;
+  font: var(--def-font-size)/1.5 var(--def-font-family)!important;
+}
+a {
+  color: var(--textcolor);
+  text-decoration:none;
+}
+a.weekcell {
+  color: var(--weeknumber);
+}
+abbr {
+  cursor:help;
+}
+div {
+  border:0;
+}
+h1,h2,h3,h4,h5,h6 {
+  text-wrap: balance;
+}
+h2 {
+  color: var(--h2color);
+  font-size:1.875rem;
+}
+h3 {
+  font-size:1.500rem;
+}
+fieldset {
+  width:96%;
+}
+label {
+  font-weight:bold;
+}
+p {
+  max-inline-size: 65ch;
+  text-wrap: pretty;
+}
+textarea {
+  /*font-size:.75rem;*/
+  overflow:auto;
+}
+/* Firefox's UA stylesheet can override Bootstrap's `font-size:inherit`
+   on native form widgets. Re-assert inheritance so controls like the
+   category selector render at the parent's size on Firefox too. */
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family:inherit;
+  font-size:inherit;
+  line-height:inherit;
+}
+table {
+  border:0;
+  border-collapse:collapse;
+  border-spacing:0;
+  table-layout:fixed;
+}
+th,
+td {
+  margin:0;
+  border:0;
+  padding:0;
+}
+th,
+.layertable th {
+  background-color: var(--thbg);
+  color: var(--thfg);
+}
+th {
+  /*font-size:.8125rem;*/
+}
+td {
+  /*font-size:.6875rem;*/
+}
+.nav-link, li.nav-item.dropdown.show, li.nav-item.dropdown.show > ul,
+  #nav-project-menu > a {
+  font-size:.75rem !important;
+}
+ul,
+ul a {
+  /*font-size:.75rem;*/
+}
+.alt {
+  background-color: var(--cellbg);
+}
+.main {
+  clear:both;
+  width:100%;
+  border-right:1px solid var(--tablebg);
+  border-bottom:1px solid var(--tablebg);
+}
+.main th,
+.main td {
+  width:14%;
+  border-top: 1px solid var(--tablebg);
+  border-left: 1px solid var(--tablebg);
+  vertical-align:top;
+}
+.main th.empty {
+  width:1%;
+  border-top: 1px solid var(--tablebg);
+  border-left: 1px solid var(--tablebg);
+  vertical-align:top;
+}
+.minical td.weekend,
+#editentry th.weekend {
+   background-color: var(--weekendbg);
+}
+.minical td#today,
+#listunapproved .odd {
+  background-color: var(--todaycellbg);
+}
+.underline {
+ text-decoration:underline;
+}
+.fixed {
+  width:10rem;
+  margin-right:0;
+}
+.cursoradd a, .clickable {
+  cursor:pointer;
+}
+.task {
+  color: var(--textcolor);
+}
+.warningBox {
+  background-color: #FFC0C0;
+  border: 1px solid #A04040;
+  color: #000;
+  margin: 20px;
+}
+#cat, #day dl.desc {
+  display:none;
+}
+
+td.weekcell {
+  background-color: var(--weeknumber);
+  font-size:.625rem;
+  text-decoration:none;
+  width: 1%;
+  text-align: center;
+  vertical-align: middle;
+}
+
+img {
+  max-inline-size: 100%;
+  block-size: auto;
+
+  /* These 2 presume pre-load a low-res image in an inline style="" on each img. */
+  /* We probably don't need them. Yet. */
+  /*
+  background-repeat: no-repeat;
+  background-size: cover;
+  */
+
+  shape-margin: 1rem;
+  border: 0;
+  vertical-align: middle;
+}
+img.color {
+  width:.9375rem;
+  height:.9375rem;
+}
+#cat {
+  font-size:1.125rem;
+}
+#trailer {
+  margin:0;
+  padding:0;
+}
+#trailer label {
+  margin:0;
+  padding:0;
+}
+#monthform {
+  clear:left;
+  margin-bottom:0;
+}
+#weekform {
+  margin-bottom:0;
+  text-align:center;
+}
+#weekmenu,
+#monthmenu,
+#yearmenu {
+  margin-bottom:0;
+  /*font-size: small;*/
+  text-align:right;
+}
+#viewr .main th a,
+#week .main th a,
+#weekdetails .main th a {
+  color: var(--thfg);
+}
+#yearform {
+  clear:right;
+  margin-bottom:0;
+  text-align:right;
+}
+#menu {
+  clear:both;
+}
+#menu,
+#menu a,
+.prefix,
+.printer {
+  color: var(--textcolor);
+  font-size:.875rem;
+}
+.prefix {
+  font-weight:bold;
+}
+a#programname {
+  margin-top:.625rem;
+  font-size:.625rem;
+}
+.printer {
+  clear:both;
+  width:15ex;
+  display:block;
+  text-decoration:none;
+}
+.new {
+  float:right;
+}
+.unapprovedentry {
+  padding-right:.1875rem;
+  color:#800000;
+/* Remove comments to set unapproved in italics.
+  font-style:italic;
+*/
+  /*font-size:.75rem;*/
+  text-decoration:none;
+}
+.nounapproved {
+  font-weight:bold;
+  font-size:.875rem;
+}
+.entry {
+  color: var(--myevents);
+  font-size: 0.75em;
+}
+.entry,
+.layerentry {
+  padding-right:.1875rem;
+  font-size:.75rem;
+  text-decoration:none;
+}
+.layerentry {
+  color:#006060;
+}
+.entry img,
+.layerentry img,
+.unapprovedentry img {
+  margin-right:.125rem;
+  margin-left:.125rem;
+}
+.dayofmonth {
+  color: var(--tablebg);
+  border:1px solid var(--tablebg);
+  border-width:0 1px 1px 0;
+  padding:0 .125rem 0 .1875rem;
+  font-weight:bold;
+  font-size:.75rem;
+  text-decoration:none;
+  vertical-align:top;
+}
+.dayofmonth:hover {
+  border-right:1px solid #00F;
+  border-bottom:1px solid #00F;
+}
+.next img,
+#activitylog .next {
+  float:right;
+}
+.prev img,
+#activitylog .prev {
+  float:left;
+}
+.next img,
+.prev img {
+  margin-top:.4375rem;
+  margin-right:.1875rem;
+}
+
+.tt {
+  font-family: 'Lucida Console', monospace;
+}
+
+#activitylog .next,
+#activitylog .prev {
+  border:0;
+  font-weight:bold;
+  font-size:.875rem;
+}
+#day .next img,
+#day .prev img {
+  margin-top:2.3125rem;
+}
+#day .monthnav .next img,
+#day .monthnav .prev img {
+  margin:0;
+}
+.dailymatrix {
+  background-color: var(--thbg);
+  cursor:pointer;
+  font-size:.75rem;
+  text-align:right;
+  text-decoration:none;
+}
+.dailymatrix:hover {
+  background-color:#CFC;
+}
+td.matrixappts {
+  width:0;
+  background-color: var(--cellbg);
+  cursor:pointer;
+  text-align:left;
+  vertical-align:middle;
+}
+td.matrixappts:hover {
+  background-color:#CFC;
+}
+td.matrix {
+  height:1px !important;
+  background-color:#000;
+}
+.matrix img {
+  width:100%;
+  height:1px;
+}
+a.matrix img {
+  width:100%;
+  height:.5rem;
+}
+.matrixd {
+  margin-right:auto;
+  margin-left:auto;
+  border-right:1px solid var(--tablebg);
+  border-left:1px solid var(--tablebg);
+  border-bottom:1px solid var(--tablebg);
+}
+.matrixd td {
+  border-bottom: 1px solid var(--tablebg);
+}
+.matrixledge {
+  border-left:1px solid #000;
+}
+.matrixlegend {
+  margin-top:1.5625rem;
+  margin-right:auto;
+  margin-left:auto;
+  border:1px solid #000;
+  padding:.3125rem;
+  background-color:#FFF;
+  text-align:center;
+}
+.matrixlegend img {
+  width:.625rem;
+  height:.625rem;
+}
+.nav {
+  color: var(--textcolor);
+  font-size:.875rem;
+  text-decoration:none;
+}
+.popup {
+  position:absolute;
+  top:0;
+  left:0;
+  color: var(--popupfg);
+  border:2px solid var(--popupfg);
+  background-color: var(--popupbg);
+  padding:1.0rem;
+  font-size:.75rem;
+  text-decoration:none;
+  visibility:hidden;
+  z-index:20;
+  border-radius:8px;
+  -moz-border-radius:8px;
+  box-shadow: 5px 5px 5px var(--box-default-color);
+}
+.popup dl,
+.popup dt {
+  margin:0;
+  padding:0;
+}
+.popup dt {
+  font-weight:bold;
+}
+.popup dd {
+  margin-left:1.25rem;
+}
+.tooltip,
+.tooltipselect {
+  cursor:help;
+  font-weight:bold;
+  font-size:.6875rem;
+  text-decoration:none;
+}
+.tooltip {
+  width:7.5rem;
+}
+.tooltipselect {
+  vertical-align:top;
+}
+.user,
+.categories {
+  color: var(--h2color);
+  font-size:1.125rem;
+  text-align:center;
+}
+.asstmode {
+  color: var(--h2color);
+  font-weight:bold;
+  text-align:center;
+}
+.help {
+  font-weight:bold;
+  vertical-align:top;
+}
+.helpbody {
+  margin-bottom:1rem;
+  font-weight:normal;
+  vertical-align:top;
+}
+.helpbody div {
+  border:1px solid #000;
+}
+.helpbody label {
+  font-size:1.1rem;
+  vertical-align:top;
+}
+.helpbody p {
+  margin:1rem;
+}
+.helplist {
+  border:0;
+  font-weight:bold;
+  font-size:1.2rem;
+  text-align:center;
+}
+.helplist a {
+  font-weight:normal;
+  text-decoration:underline;
+}
+.helplist a.current {
+  font-weight:bold;
+  text-decoration:none;
+}
+#helpbug form {
+  margin-bottom:1rem;
+}
+#helpbug label {
+  clear:left;
+  float:left;
+  width:32%;
+}
+#helpbug p {
+  margin:0 1rem;
+}
+img.help {
+  cursor:help;
+}
+.sample {
+  text-align:left;
+  width:1rem;
+}
+.standard {
+  background-color: var(--cellbg);
+  border:1px solid var(--tablebg);
+  font-size:.75rem;
+}
+.standard th {
+  border:0;
+  border-bottom:1px solid var(--tablebg);
+  padding:0;
+  font-size:1.125rem;
+}
+ /* style for week hover highlight */
+tr.highlight td {
+  background-color:#ffb !important;
+}
+.minical {
+  margin:0 0 .3125rem 0;
+  font-size:.625rem;
+}
+.minical caption a {
+  color: var(--captions);
+  font-weight:bold;
+}
+.minical caption {
+  caption-side: top;
+  text-align: center;
+}
+.minical th {
+  border:0 solid var(--bgcolor);
+  padding:0 .125rem;
+}
+.minical th,
+.minical td.empty {
+  background-color: var(--bgcolor) !important;
+  color: var(--textcolor);
+  text-align:center;
+}
+.minical th.empty {
+  background-color:transparent !important;
+}
+.minical td {
+  background-color: var(--cellbg);
+  border:1px solid var(--bgcolor);
+  padding:0 .125rem;
+}
+.minical td a {
+  margin:0;
+  padding:.1875rem;
+  display:block;
+  text-align:center;
+}
+.minical td.hasevents {
+  font-weight:bold;
+}
+.minitask {
+  width:98%;
+  margin-left:1px;
+  border:1px solid #000;
+}
+.minitask tr.header th,
+.minitask tr.header td {
+  background-color: var(--cellbg);
+  border-bottom:.125rem solid #000;
+  padding:0;
+  font-size:.75rem;
+  text-align:center;
+}
+.minitask tr.header td {
+  margin:0;
+  border-bottom:0;
+  text-align:right;
+}
+.sorter {
+  margin:0;
+  border-bottom:0;
+  cursor:pointer;
+  text-align:left !important;
+}
+.sorterbottom {
+ border-bottom:1px solid #000 !important;
+}
+.minitask td {
+  color: var(--textcolor);
+  border-bottom:1px solid #000;
+  padding:0;
+  font-size:.75rem;
+  text-align:center;
+}
+.minitask td.filler {
+  border-bottom:0;
+  padding:0;
+}
+
+#pref .form-group {
+  text-align: left;
+}
+/* Settings/Preferences month preview for color.
+ * We have to override the values set in styles.php for
+ * some of these in the preview month since styles.php doesn't
+ * use variables because of the gradient functions in use.
+ */
+#admin table#month_main td.today,
+#pref table#month_main td.today {
+  background-color: var(--todaycellbg) !important;
+}
+#admin table#month_main td.weekend,
+#pref table#month_main td.weekend {
+  background-color: var(--weekendbg) !important;
+}
+#admin table#month_main td.othermonth,
+#pref table#month_main td.othermonth {
+  background-color: var(--othermonthbg) !important;
+}
+#admin table#month_main th,
+#admin table#month_main th.weekend,
+#pref table#month_main th,
+#pref table#month_main th.weekend {
+  background-color: var(--thbg) !important;
+}
+#admin table#month_main td,
+#pref table#month_main td {
+  background-color: var(--cellbg) !important;
+}
+#admin table#month_main td.hasevents,
+#pref table#month_main td.hasevents {
+  background-color: var(--haseventsbg) !important;
+}
+#admin table#month_main td.weekcell,
+#pref table#month_main td.weekcell {
+  background-color: var(--weeknumber) !important;
+}
+
+/* Color-picker live preview: strip the server-baked gradient images from the
+ * sample month so the var(--*) background-colors set in styles.php show through
+ * and update live as the user edits a color. Without this, when
+ * ENABLE_GRADIENTS is on, the gradient image overlays and masks the color
+ * change. Scoped to .colorpreview (the sample-month container in admin.php /
+ * pref.php) so the real calendar keeps its gradients. */
+.colorpreview .main td,
+.colorpreview .main th {
+  background-image: none !important;
+}
+
+#admin table,
+#pref table {
+  vertical-align:top;
+}
+#admin input,
+#admin select,
+#pref input,
+#pref select {
+  margin:0 .1875rem;
+}
+#admin .main td,
+#pref .main td {
+  height:1.875rem;
+}
+#admin .main td,
+#admin .main th,
+#pref .main td,
+#pref .main th {
+  font-size:.75rem;
+}
+#admin #month_main, #monthtitle {
+  width: 45%;
+  float: right;
+}
+#admin .empty,
+#pref .empty {
+  border-top:transparent !important;
+  border-left:transparent !important;
+}
+#admin .main td.weekcell,
+#pref .main td.weekcell {
+  color: var(--h2color);
+  margin:0;
+  text-align:center;
+  text-decoration:none;
+  vertical-align:middle;
+}
+#admin #em_smtp { font-size:.85rem; }
+#admin #default-user-settings { font-size:.85rem; }
+#admin .main th.weekcell,
+#pref .main th.weekcell {
+  background-color:transparent;
+}
+#admin .main td.empty,
+#admin .main td.weekcell,
+#admin .main th.empty,
+#admin .main th.weekcell,
+#pref .main td.empty,
+#pref .main td.weekcell,
+#pref .main th.empty,
+#pref .main th.weekcell {
+  width:1%;
+}
+#admin #saver {
+  clear:both;
+  margin-top:1rem;
+}
+#example_month {
+  float:right;
+  width:45%;
+  background-color: var(--bgcolor);
+  margin:3rem 1rem 0;
+}
+#example_month p {
+  color: var(--h2color);
+  font-weight:bold;
+  text-align:center;
+}
+#pref .tooltip {
+  width:14.6875rem;
+  vertical-align:top;
+}
+.embactlog {
+  width:100%;
+  border-right:1px solid var(--tablebg);
+  border-bottom:1px solid var(--tablebg);
+  border-spacing:0;
+}
+.embactlog tr {
+  background-color:#FFF;
+}
+.embactlog .odd {
+  background-color:#EEE;
+}
+.embactlog th {
+  width:14%;
+  border-top:1px solid var(--tablebg);
+  border-bottom:1px solid var(--tablebg);
+  border-left:1px solid var(--tablebg);
+  padding:.0625rem .1875rem;
+}
+.embactlog th.action,
+.embactlog th.cal,
+.embactlog th.usr {
+  width:7%;
+}
+.embactlog td {
+  border-left:1px solid var(--tablebg);
+  padding:.0625rem .1875rem;
+}
+#day div.minicalcontainer {
+  border:1px solid #000;
+  padding:.1875rem;
+  vertical-align:top;
+}
+#day table.minical {
+  margin-right:auto;
+  margin-left:auto;
+}
+#day .minical caption {
+  background-color: var(--thbg);
+  color: var(--thfg);
+  margin-right:auto;
+  margin-left:auto;
+  font-weight:bold;
+  font-size:2.9375rem;
+}
+#day .minical td.selectedday {
+  border:.125rem solid var(--tablebg);
+}
+#day .monthnav th {
+  border:0;
+  padding:.1875rem;
+  text-align:center;
+}
+.menuhref {
+  font-family:arial, verdana, sans-serif;
+}
+#datesel td.field {
+  font-size:.75rem;
+}
+.glance {
+  width:100%;
+  border-right:1px solid var(--tablebg);
+  border-bottom:1px solid var(--tablebg);
+}
+.glance th.empty {
+  background-color: var(--bgcolor) !important;
+  border-top:1px solid var(--bgcolor) !important;
+  border-left:1px solid var(--bgcolor) !important;
+}
+.glance th.row {
+  width:14%;
+  height:2.5rem;
+  border-top:1px solid var(--tablebg);
+  border-left:1px solid var(--tablebg);
+  vertical-align:middle;
+}
+.glance td {
+  border-top:1px solid var(--tablebg);
+  border-left:1px solid var(--tablebg);
+  padding-left:.1875rem;
+  vertical-align:top;
+}
+th.day_glance_time {
+  width: 5% !important;
+  height:2.5rem;
+  border-top:1px solid var(--tablebg);
+  border-left:1px solid var(--tablebg);
+  vertical-align:middle;
+}
+#day .glance td {
+  width:86%;
+  height:2.5rem;
+}
+#day dl.desc {
+  margin:0;
+  padding:0;
+}
+#day dl.desc dt {
+  font-weight:bold;
+}
+#day dl.desc dd {
+  margin:0;
+  padding-left:1.25rem;
+}
+#year #monthgrid td {
+  padding:0 .3125rem;
+  vertical-align:top;
+}
+#year .minical tr {
+  vertical-align:top;
+}
+#pref .main th,
+#viewv .main th,
+#viewl .main th,
+#month .main th {
+  width:14%;
+}
+#vieww .main th,
+#week .main th {
+  width:12%;
+}
+#viewr th.small {
+  background-color:none;
+  font-size:.5rem;
+}
+#viewd .main th {
+  border-right:1px solid var(--tablebg);;
+  padding:.0625rem;
+}
+#day .main th.empty,
+#month .main th.empty,
+#pref .main th.weekcell,
+#viewl .main th.empty {
+  width:1%;
+  border-top:0;
+  border-left:0;
+  background-color:transparent !important;
+}
+#month .main td.weekcell,
+#pref .main td.weekcell,
+#viewl .main td.weekcell {
+  width:1%;
+  color: var(--h2color);
+  margin:0;
+  font-size:.75rem;
+  text-align:center;
+  text-decoration:none;
+  vertical-align:middle;
+}
+#pref .main td.empty,
+#pref .main th.empty {
+  width:1%;
+  border-top-color:transparent !important;
+  border-left-color:transparent !important;
+}
+#pref .main td.weekcell,
+#pref .main th.weekcell {
+  width:1%;
+}
+#viewv .main th.empty,
+#viewm .main th.empty,
+#vieww .main th.empty,
+#viewr .main th.empty,
+#week .main th.empty {
+  width:5%;
+  border-top:1px solid var(--bgcolor) !important;
+  border-left:1px solid var(--bgcolor) !important;
+  background-color:transparent !important;
+  background: none;
+}
+#week .main th.row {
+  width:5%;
+  height:2.5rem;
+  vertical-align:top;
+}
+#viewt.main {
+  margin:0;
+  padding:0;
+}
+#vieww .main th.row,
+#viewv .main th.row,
+#viewm .main th.row,
+#viewt .main th {
+  width:10%;
+  vertical-align:top;
+}
+#viewv .main th.row {
+  padding:0 .3125rem;
+  text-align:left;
+}
+#viewd .main th.row {
+  border-right-width:0;
+  text-align:left;
+}
+#viewr th.row {
+  height:2.5rem;
+  vertical-align:top;
+}
+#vieww .main th.today,
+#viewm .main th.today,
+#viewv .main th.today {
+  width:10%;
+}
+#pref .main th.today,
+#viewr .main th.today,
+#week .main th.today {
+  width:14%;
+}
+#year .minical td {
+  text-align:center;
+  vertical-align:top;
+}
+#pref .main td {
+  height:1.875rem;
+  font-size:.75rem;
+}
+#viewl .main td,
+#month .main td, #month #month_main td {
+  height:6.0rem;
+  font-size:.75rem;
+  vertical-align:top;
+}
+#vieww .main td,
+#week .main td,
+#viewr .main td,
+#viewm .main td,
+#viewv .main td {
+  font-size:.75rem;
+  padding-left:.1875rem;
+}
+#viewl #prevmonth {
+  float:left;
+}
+#viewl #nextmonth {
+  float:right;
+}
+table#nextmonth {
+  float: right;
+}
+table#prevmonth {
+  float: left;
+}
+/* On narrow viewports the two floated mini-calendars can't fit side by
+   side and drop into separate rows, pushing the main title far down.
+   Drop the floats on small screens so they lay out inline and stack
+   gracefully when space is tight. Uses `inline-table` rather than
+   `inline-block` so the <caption> keeps its table-caption semantics
+   and `caption-side: top` is still honored (#640). */
+@media (max-width: 576px) {
+  table#prevmonth,
+  table#nextmonth {
+    float:none;
+    display:inline-table;
+    vertical-align:top;
+  }
+}
+#month .minical caption,
+#viewl .minical caption {
+  margin-left:4ex;
+}
+#year .minical {
+  display:block;
+}
+#year .minical caption {
+  margin:0 auto;
+}
+#viewl .minical,
+#month .minical {
+  margin:0 .25rem;
+  border:0;
+}
+.dateselIcon {
+  cursor: pointer;
+  margin-left: 5px;
+}
+.topnav {
+  border:0;
+}
+.title {
+  width:99%;
+  text-align:center;
+}
+#day .title {
+  margin-top:.1875rem;
+  text-align:center;
+}
+.title .date,
+#day .title .date {
+  color: var(--h2color);
+  font-weight:bold;
+  font-size:1.5rem;
+  text-align:center;
+}
+.title .titleweek {
+  color: var(--h2color);
+  font-size:1.25rem;
+}
+.title .viewname,
+.title .user,
+#day .title .user {
+  color: var(--h2color);
+  font-weight:bold;
+  font-size:1.125rem;
+  text-align:center;
+}
+#weekdetails .main {
+  width:90%;
+}
+#weekdetails .main th {
+  width:100%;
+  padding:.125rem;
+}
+#weekdetails .main td {
+  height:4.6875rem;
+}
+#viewt table.timebar {
+  width:100%;
+}
+#viewt table.timebar th {
+  width:10%;
+}
+#viewt div table th {
+  width:10%;
+}
+#viewt div table td {
+  width:90%;
+}
+#viewt table.timebar dh {
+  width:90%;
+}
+#viewt td.timebar {
+  width:90%;
+  background-color:#FFF;
+  color:#999;
+  font-size:.625rem;
+  text-align:center;
+}
+#viewt .yardstick td {
+  border:1px solid #999;
+  padding:0;
+}
+#viewt td.entry {
+  padding:0;
+}
+#viewt table.timebar a {
+  text-align:inherit !important;
+}
+.viewnav {
+  width:99%;
+  border:0;
+}
+#login table,
+#register table {
+  border:1px solid var(--tablebg);
+  font-size:.75rem;
+}
+#login #save-cookies {
+  font-size:.66rem;
+  font-weight: normal;
+}
+.cookies {
+  font-size:.8125rem;
+}
+.strikethrough {
+  text-decoration:line-through;
+}
+.pub {
+  background-color:#80FF80;
+  text-align:center;
+}
+.conf {
+  background-color:#FFFF80;
+  text-align:center;
+}
+.priv {
+  background-color:#FF5050;
+  text-align:center;
+}
+.boxtop {
+  border-top:1px solid var(--box-default-color);
+}
+.boxright {
+  border-right:1px solid var(--box-default-color);
+}
+.boxbottom {
+  border-bottom:1px solid var(--box-default-color);
+}
+.boxleft {
+  border-left:1px solid var(--box-default-color);
+}
+.boxall {
+  border:1px solid var(--box-default-color);
+  padding-left:.1875rem;
+}
+.leftpadded {
+  padding-left:3.125rem;
+  text-align:left;
+}
+.location {
+ font-size:.625rem;
+}
+.byxxx th,
+.byxxx td {
+  text-align:center;
+}
+.icon_text {
+  width:.625rem;
+  height:.625rem;
+  border:0;
+}
+.alignbottom {
+  vertical-align:bottom;
+}
+.aligncenter {
+  text-align:center;
+}
+.alignleft,
+.minitask td.name {
+  text-align:left;
+}
+.alignmiddle {
+  vertical-align:middle;
+}
+.alignright,
+.minitask td.pct {
+  text-align:right;
+}
+.aligntop {
+  vertical-align:top;
+}
+.bold {
+  font-weight:bold;
+}
+#about p {
+  margin:.0625rem;
+}
+#scroller {
+  position:absolute;
+  width:100%;
+}
+.layers {
+  float:left;
+  background-color: var(--cellbg);
+  margin:.125rem .0625rem;
+  padding:.3125rem;
+}
+.layers h4 {
+  margin:0 0 .3125rem;
+}
+.layers p {
+  margin:0;
+  padding-left:.3125rem;
+  font-size:.75rem;
+}
+.layers p label {
+  font-size:.8125rem;
+}
+#securityAudit {
+  border:1px solid #c0c0c0;
+}
+#securityAudit th {
+  background-color:#d0d0d0;
+}
+#securityAudit tr.odd td {
+  background-color:#e0e0e0;
+}
+#securityAuditNotes {
+  margin:1.25rem;
+  border:1px solid var(--tablebg);
+}
+#securityAuditNotes li {
+  margin-top:.25rem;
+  margin-bottom:.25rem;
+}
+#accountiframe,
+#useriframe {
+  width:90%;
+  border:0;
+}
+#accountiframe {
+  height:13.125rem;
+}
+#useriframe {
+  height:17.5rem;
+}
+.note {
+  color: var(--tablebg);
+  margin:0 1.5625rem;
+  border:1px solid var(--tablebg);
+  padding:.625rem;
+}
+.rightsidetip {
+  float:right;
+  width:15.625rem;
+  margin-top:.625rem;
+  margin-right:1.5625rem;
+  border:1px solid var(--tablebg);
+  padding:.3125rem;
+  font-size:.6875rem;
+  text-align:center;
+}
+.layertable {
+   text-align:center;
+}
+.layertable td {
+  background-color: var(--cellbg);
+}
+.layertable th,
+.layertable td {
+  padding:.3125rem 1.25rem;
+}
+/* NOTE: the legacy #layers #layertable rules (navy outset header, gray
+ * odd/even cells) were removed here. The layer list is now a Bootstrap
+ * ".table table-striped" table (see the JS in layers.php) and the JS no longer
+ * emits td.odd/td.even, so those pre-Bootstrap rules only fought the Bootstrap
+ * styling (navy/outset header). They had been dormant for years because the
+ * body id was CamelCase; lowercasing it (so other page CSS works) revived them
+ * on this page, hence the removal. */
+.fakebutton {
+   border:2px #d0d0d0 outset;
+   /*border-color:#e0e0e0 #808080 #808080 #e0e0e0;*/
+   padding-right:.3125rem;
+   padding-left:.3125rem;
+   padding:.25rem;
+   background-color:#d0d0d0;
+   color:#000;
+   font-size:11pt;
+}
+.fakebutton:hover {
+   background-color:#a0a0a0;
+   border:2px #c0c0c0 outset;
+}
+.eventattachment {
+  background-color: var(--cellbg);
+  border:1px solid var(--tablebg);
+  padding:.25rem;
+}
+.eventcomment {
+  background-color: var(--cellbg);
+  border:1px solid var(--tablebg);
+  padding:.25rem;
+}
+#adminhome table,
+#adminhome td a {
+  background-color: var(--cellbg);
+}
+#adminhome table {
+  border:1px solid #000;
+  padding:.3125rem;
+}
+#adminhome table td {
+  padding:1.25rem;
+}
+#adminhome table td,
+#adminhome td a {
+  text-align:center;
+}
+#adminhome td a {
+  border:1px solid;
+  border-color:#EEE #777 #777 #EEE;
+  padding:.625rem;
+}
+#adminhome td a:hover {
+  border-color:#777 #eee #eee #777;
+  background-color:#aaa;
+}
+#login label,
+#login textarea,
+#login tr,
+#login td {
+  font-size:1rem;
+}
+a:hover {
+  color:#00f;
+}
+table.ThemeMenubar {
+  table-layout:auto;
+  font-size: 80% !important;
+}
+#editCatsDiv #innerDiv {
+  border:1px solid;
+  border-color:#E0E0E0 #808080 #808080 #E0E0E0;
+  background-color:#ffffff;
+  padding: 5px;
+  font-size: 80%;
+}
+
+/*date selection "popup"*/
+#dateselOverlay {
+  position: absolute;
+  margin: auto;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10001;
+/*
+  background-color: #fff;
+  opacity: 0.50;
+*/
+}
+
+#dateselDiv {
+  display: none;
+  width: 150px;
+  /*height: 300px;*/
+  /*background-color: #d0d0d0;*/
+  /*padding: 10px;*/
+  padding: 0;
+  z-index: 11000; /* modalbox uses 10000 */
+}
+
+#dateselDiv #cancelImage {
+  position: relative;
+  left: -20px;
+  top: 10px;
+}
+
+.dateselTable #dateselMonthName {
+  font-size: 10pt;
+  text-align: center;
+  font-weight: bold;
+  background-color: #000080;
+  color: #ffffff;
+}
+.dateselTable #dateselMonthName img.clickable {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.dateselTable td {
+  text-align: center;
+  font-size: 10pt;
+  background-color: #c0c0c0;
+  padding: 1px;
+}
+
+.dateselTable td.today {
+  background-color: #ffff88;
+}
+.dateselTable td.selected {
+  background-color: #00ff00;
+}
+.dateselTable td.wdayname {
+  font-size: 8pt;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.button-icon {
+  width: 14px;
+  height: 14px;
+  filter: invert(1);
+  margin-right: 10px;
+}
+.button-icon-inverse {
+  width: 14px;
+  height: 14px;
+  margin-right: 10px;
+}
+
+.bullet {
+  width: 0.3em;
+  height: 0.3em;
+}
+
+/* No 2nd level submenu built into Bootstrap v4.
+   Source: https://ricard.dev/bootstrap-4-second-level-menu-nav/ */
+
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu a::after {
+  transform: rotate(-90deg);
+  position: absolute;
+  right: 6px;
+  top: .8em;
+}
+
+.dropdown-submenu .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-left: .1rem;
+  margin-right: .1rem;
+}
+@media(prefers-reduced-motion: no-preference) {
+  :has(:target) {
+    scroll-behavior: smooth;
+    scroll-padding-top: 2rem;
+  }
+}

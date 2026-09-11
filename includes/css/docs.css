@@ -1,0 +1,328 @@
+:root {
+  --blk: rgb(0, 0, 0);
+  --wht: rgb(255, 255, 255);
+
+  --red: rgb(255, 0, 0);
+  --grn: rgb(0, 255, 0);
+  --blu: rgb(0, 0, 255);
+}
+
+html,
+body {
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--wht);
+  color: var(--blk);
+  font: 16px/1.15 Arial, Helvetica, sans-serif;
+}
+
+* + * {
+  margin-block-start: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+a[target="_top"],
+#upgrading th {
+  margin-inline-start: 95%;
+}
+
+b,
+dt,
+.note,
+.tip,
+#styling code,
+#funcs .prompt,
+#wc_db table th {
+  font-weight: bold;
+}
+
+dl,
+ul {
+  margin-inline-start: 10px;
+}
+
+dt {
+  margin-block-start: 10px;
+}
+
+h2 {
+  background-color: rgb(25, 25, 112);
+  color: var(--wht);
+}
+
+h2,
+h3,
+.ptip,
+#funcs h3,
+#guide h2 {
+  padding: 5px;
+}
+
+hr {
+  margin-block-end: 7px;
+}
+
+img,
+table {
+  border: 0;
+}
+
+p {
+  margin: 10px;
+}
+
+pre {
+  background-color: rgb(238, 238, 255);
+  margin-inline-start: 25px;
+  border: 1px solid var(--blu);
+  padding: 4px;
+  font: 0.875rem courier, monospace;
+}
+
+ol,
+ul {
+  margin-block-end: 1rem;
+}
+
+.colorheader {
+  background-color: var(--blk);
+  color: var(--wht);
+  margin-inline-end: 3px;
+}
+
+.colorheader,
+.note,
+.tip {
+  padding: 2px;
+}
+
+.hide {
+  display: none;
+}
+
+.note {
+  background-color: rgb(135, 206, 250);
+  border: 1px solid var(--blk);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.ptip {
+  background: rgb(221, 221, 221);
+  border: 1px solid rgb(170, 170, 170);
+}
+
+.tip {
+  background-color: rgb(255, 255, 0);
+}
+
+.tt {
+  font: 0.85rem 'Lucida Console', monospace;
+}
+
+.vtop {
+  vertical-align: top;
+}
+
+.vbottom {
+  vertical-align: bottom;
+}
+
+#funcs blockquote {
+  margin-block: 5px;
+}
+
+#funcs h3 {
+  background-color: rgb(25, 25, 112);
+  color: var(--wht);
+}
+
+#funcs p {
+  margin-block-start: 2px;
+}
+
+#funcs ul {
+  margin-block: 2px;
+}
+
+#funcs .note {
+  background-color: rgb(204, 204, 204);
+  color: var(--blk);
+  padding: 1px;
+}
+
+#funcs .tip {
+  margin-inline-end: 10px;
+  border: 1px solid var(--blk);
+  padding: 1px 5px;
+}
+
+:where(#guide, #sysadmin) .note {
+  background-color: var(--blu);
+  color: var(--wht);
+}
+
+#guide dt {
+  margin-inline-start: 25px;
+}
+
+#guide tr {
+  background-color: rgb(96, 96, 128);
+  color: rgb(240, 240, 240);
+}
+
+#guide th {
+  background-color: var(--blk);
+}
+
+#guide td {
+  vertical-align: top;
+}
+
+#guide .tip {
+  margin-inline-end: 10px;
+  border: 1px solid var(--blk);
+  padding: 1px 5px;
+}
+
+#manual h3 + dl dt {
+  padding-inline-start: 20px;
+}
+
+#rpt_matrix {
+  margin-block-start: 1rem;
+}
+
+#rpt_matrix tr:nth-of-type(2) {
+  margin-inline: auto;
+}
+
+#rpt_matrix :where(th, td) {
+  inline-size: 100%;
+  margin: 1px;
+  border: 1px;
+  padding: 3px;
+  text-align: center;
+}
+
+#rpt_matrix td:last-of-type {
+  text-align: start;
+}
+
+#styling body {
+  padding: 0 40px;
+}
+
+#styling dt {
+  font-family: monospace;
+}
+
+#styling :where(h1, h2) {
+  margin-inline-start: -20px;
+}
+
+#styling p {
+  text-indent: 3ex;
+}
+
+#styling table {
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+#styling :where(th, td) {
+  border: 1px solid rgb(128, 128, 128);
+  padding: 3px;
+}
+
+#styling td {
+  background-color: rgb(221, 221, 221);
+  color: var(--blk);
+  border-color: rgb(187, 187, 187);
+  font-family: monospace;
+  vertical-align: top;
+}
+
+#styling div.example {
+  inline-size: 350px;
+  margin: 0 auto;
+}
+
+#styling div.example p {
+  margin: 0;
+  font-style: italic;
+  font-size: small;
+  text-align: center;
+}
+
+#styling div.example pre {
+  background-color: rgb(238, 238, 255);
+  margin: 0;
+  border: 1px solid var(--blu);
+  padding: 5px;
+}
+
+#sysadmin dt {
+  margin-block-start: 20px;
+  margin-inline-start: 25px;
+}
+
+#sysadmin th {
+  background-color: rgb(238, 238, 238);
+  color: var(--blk);
+  border: 1px solid rgb(204, 204, 204);
+}
+
+#sysadmin .tip {
+  margin-inline-end: 10px;
+  border: 1px solid var(--blk);
+  padding: 1px 5px;
+}
+
+#upgrading p:first-of-type {
+  margin-block-end: 0;
+}
+
+#upgrading table {
+  margin-inline-start: 50px;
+}
+
+#upgrading tr {
+  background-color: rgb(96, 96, 128);
+  color: rgb(240, 240, 240);
+}
+
+#upgrading td {
+  vertical-align: top;
+}
+
+#upgrading ul:first-of-type {
+  margin-block-start: 0;
+}
+
+#wc_db table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#wc_db table th {
+  background-color: rgb(229, 229, 229);
+}
+
+#wc_db table :where(table, th, td) {
+  border: 0.1rem solid var(--blk);
+}
+
+#wc_db table :where(th, td) {
+  padding: 0.2rem;
+}
