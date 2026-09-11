@@ -121,6 +121,8 @@ if ( $id > 0 && empty ( $error ) ) {
       }
       dbi_free_result ( $res );
     }
+    error_log( 'del_entry: id=' . $id . ' branch=owner, participants='
+      . count( $partlogin ) . ', SEND_EMAIL=' . $SEND_EMAIL );
     // Get event name.
     $res = dbi_execute ( 'SELECT cal_name, cal_date, cal_time FROM webcal_entry
   WHERE cal_id = ?', [$id] );
@@ -221,7 +223,17 @@ if ( $id > 0 && empty ( $error ) ) {
             // Apply user's GMT offset and display their TZID.
             get_pref_setting ( $partlogin[$i], 'EMAIL_HTML' ), $login_email,
             ( $override_repeat ? '' : $id ) );
+          error_log( 'del_entry: send to ' . $partlogin[$i]
+            . ' err=' . $mail->ErrorInfo() );
+        } else {
+          error_log( 'del_entry: skipped ' . $partlogin[$i]
+            . ' email_del_pref=' . get_pref_setting ( $partlogin[$i], 'EMAIL_EVENT_DELETED' )
+            . ' has_email=' . ( empty( $tempemail ) ? 'no' : 'yes' ) );
         }
+      } else {
+        error_log( 'del_entry: not emailing ' . ( isset($partlogin[$i]) ? $partlogin[$i] : '?' )
+          . ' can_email=' . ( $can_email ? 'yes' : 'no' )
+          . ' is_self=' . ( $partlogin[$i] == $login ? 'yes' : 'no' ) );
       }
     }
   } else {
@@ -252,6 +264,7 @@ if ( $id > 0 && empty ( $error ) ) {
         // Notify the user whose calendar the event was removed from,
         // unless that user is the one performing the deletion.
         if ( $del_user != $login ) {
+          error_log( 'del_entry: branch=single-user, removing for ' . $del_user );
           $res = dbi_execute ( 'SELECT cal_name, cal_date, cal_time
             FROM webcal_entry WHERE cal_id = ?', [$id] );
           if ( $res ) {

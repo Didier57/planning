@@ -148,14 +148,32 @@ class WebCalMailer {
    */
   function IcsAttach( $id ) {
     if( function_exists( 'export_ical' ) ) {
-      $this->mail->Ical = export_ical( $id, true, $this->icalMethod );
-      // PHPMailer only includes the text/calendar part when the message
-      // is multipart/alternative, i.e. when AltBody is set in addition
-      // to Body. Ensure that is the case (a trailing newline keeps the
-      // two bodies distinct).
-      if ( empty ( $this->mail->AltBody ) )
-        $this->mail->AltBody = $this->mail->Body . "\n";
+      // Never let a calendar export failure prevent the email from being
+      // sent: fall back to a plain text email in that case.
+      try {
+        $ical = export_ical( $id, true, $this->icalMethod );
+      } catch ( \Throwable $e ) {
+        error_log( 'WebCalMailer: export_ical failed for id=' . $id
+          . ': ' . $e->getMessage() );
+        $ical = '';
+      }
+      if( ! empty( $ical ) ) {
+        $this->mail->Ical = $ical;
+        // PHPMailer only includes the text/calendar part when the message
+        // is multipart/alternative, i.e. when AltBody is set in addition
+        // to Body. Ensure that is the case (a trailing newline keeps the
+        // two bodies distinct).
+        if ( empty ( $this->mail->AltBody ) )
+          $this->mail->AltBody = $this->mail->Body . "\n";
+      }
     }
+  }
+
+  /**
+   * Expose PHPMailer's last error for diagnostics/logging.
+   */
+  function ErrorInfo() {
+    return $this->mail->ErrorInfo;
   }
 
   /**
