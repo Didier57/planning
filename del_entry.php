@@ -199,6 +199,11 @@ if ( $id > 0 && empty ( $error ) ) {
       dbi_execute ( 'DELETE FROM webcal_entry_ext_user WHERE cal_id = ?', [$id] );
     }
 
+    // Email participants that the event was deleted.
+    // Same logic as edit_entry_handler.php: the creator gets a copy of
+    // their own event's emails when EMAIL_EVENT_CREATE is 'Y'.
+    $send_own = get_pref_setting ( $login, 'EMAIL_EVENT_CREATE' );
+
     for ( $i = 0, $cnt = count ( $partlogin ); $i < $cnt; $i++ ) {
       // Log the deletion.
       activity_log ( $id, $login, $partlogin[$i], $log_delete, '' );
@@ -208,12 +213,13 @@ if ( $id > 0 && empty ( $error ) ) {
       if ( access_is_enabled() )
         $can_email = access_user_calendar ( 'email', $partlogin[$i], $login );
 
-      // Don't email the logged in user.
-      if ( $can_email && $partlogin[$i] != $login ) {
+      // Don't email the logged in user, unless they asked for a copy
+      // of their own event notifications.
+      if ( $can_email && ( $partlogin[$i] != $login || $send_own == 'Y' ) ) {
         set_env ( 'TZ', get_pref_setting ( $partlogin[$i], 'TIMEZONE' ) );
         $user_language = get_pref_setting ( $partlogin[$i], 'LANGUAGE' );
         user_load_variables ( $partlogin[$i], 'temp' );
-        if ( ! $is_nonuser_admin && $partlogin[$i] != $login &&
+        if ( ! $is_nonuser_admin &&
           boss_must_be_notified ( $login, $partlogin[$i] ) && !
             empty ( $tempemail ) && $SEND_EMAIL != 'N' ) {
           reset_language ( empty ( $user_language ) || $user_language == 'none'
