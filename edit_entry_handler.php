@@ -956,9 +956,8 @@ if( empty( $error ) ) {
 
       // Don't send mail if editing a non-user calendar and we are the admin.
       if( ! $found_flag && ! $is_nonuser_admin && $can_email == 'Y' ) {
-        // Only send mail if their email address is filled in.
-        $do_send =
-          get_pref_setting( $old_participant, 'EMAIL_EVENT_DELETED' );
+        // Notifications are forced: every participant is always warned.
+        $do_send = 'Y';
         $htmlmail      = get_pref_setting( $old_participant, 'EMAIL_HTML' );
         $t_format      = get_pref_setting( $old_participant, 'TIME_FORMAT' );
         $user_language = get_pref_setting( $old_participant, 'LANGUAGE' );
@@ -996,9 +995,7 @@ if( empty( $error ) ) {
             $msg .= $url . "\n\n";
           }
           $mail->WC_Send( $login_fullname, $tempemail,
-            $tempfullname, $name, $msg, $htmlmail, $from,
-            ( get_pref_setting( $old_participant,
-              'EMAIL_ATTACH_ICS', 'N' ) == 'Y' ? $id : '' ) );
+            $tempfullname, $name, $msg, $htmlmail, $from, $id );
           activity_log( $id, $login, $old_participant, LOG_NOTIFICATION,
             translate( 'User removed from participants list.' ) );
         }
@@ -1075,9 +1072,8 @@ if( empty( $error ) ) {
 
       // Don't send mail if we are editing a non-user calendar and are the admin.
       if( ! $is_nonuser_admin && $can_email == 'Y' ) {
-        // Only send mail if their email address is filled in.
-        $do_send = get_pref_setting( $i, $newevent
-          ? 'EMAIL_EVENT_ADDED' : 'EMAIL_EVENT_UPDATED' );
+        // Notifications are forced: every participant is always warned.
+        $do_send = 'Y';
         $htmlmail      = get_pref_setting( $i, 'EMAIL_HTML' );
         $t_format      = get_pref_setting( $i, 'TIME_FORMAT' );
         $user_language = get_pref_setting( $i, 'LANGUAGE' );

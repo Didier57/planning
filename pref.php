@@ -703,29 +703,9 @@ if ( $SEND_EMAIL == 'Y' ) { ?>
     ['Y'=> translate ( 'HTML' ), 'N'=>translate ( 'Plain Text' )] ) ?>
 </td></tr>
 
-<tr><td data-toggle="tooltip" data-placement="top" title="<?php etooltip ("email-include-ics");?>">
- <label for="pref_EMAIL_ATTACH_ICS"><?php etranslate ( 'Include iCalendar attachments' )?>:</label></td><td class="form-inline mt-1">
- <?php echo print_radio ( 'EMAIL_ATTACH_ICS', '', '', 0 ) ?>
-</td></tr>
-
 <tr><td data-toggle="tooltip" data-placement="top" title="<?php etooltip ("email-event-reminders-help");?>">
  <label for="pref_EMAIL_REMINDER"><?php etranslate ( 'Event reminders' )?>:</label></td><td class="form-inline mt-1">
  <?php echo print_radio ( 'EMAIL_REMINDER' ) ?>
-</td></tr>
-
-<tr><td data-toggle="tooltip" data-placement="top" title="<?php etooltip ("email-event-added");?>">
- <label for="pref_EMAIL_EVENT_ADDED"><?php etranslate ( 'Events added to my calendar' )?>:</label></td><td class="form-inline mt-1">
- <?php echo print_radio ( 'EMAIL_EVENT_ADDED' ) ?>
-</td></tr>
-
-<tr><td data-toggle="tooltip" data-placement="top" title="<?php etooltip ("email-event-updated");?>">
- <label for="pref_EMAIL_EVENT_UPDATED"><?php etranslate ( 'Events updated on my calendar' )?>:</label></td><td class="form-inline mt-1">
- <?php echo print_radio ( 'EMAIL_EVENT_UPDATED' ) ?>
-</td></tr>
-
-<tr><td data-toggle="tooltip" data-placement="top" title="<?php etooltip ("email-event-deleted");?>">
- <label for="pref_EMAIL_EVENT_DELETED"><?php etranslate ( 'Events removed from my calendar' )?>:</label></td><td class="form-inline mt-1">
- <?php echo print_radio ( 'EMAIL_EVENT_DELETED' ) ?>
 </td></tr>
 
 <tr><td data-toggle="tooltip" data-placement="top" title="<?php etooltip ("email-event-rejected");?>">

@@ -199,8 +199,7 @@ if ( $id > 0 && empty ( $error ) ) {
         $user_language = get_pref_setting ( $partlogin[$i], 'LANGUAGE' );
         user_load_variables ( $partlogin[$i], 'temp' );
         if ( ! $is_nonuser_admin && $partlogin[$i] != $login &&
-          get_pref_setting ( $partlogin[$i], 'EMAIL_EVENT_DELETED' ) == 'Y' &&
-            boss_must_be_notified ( $login, $partlogin[$i] ) && !
+          boss_must_be_notified ( $login, $partlogin[$i] ) && !
             empty ( $tempemail ) && $SEND_EMAIL != 'N' ) {
           reset_language ( empty ( $user_language ) || $user_language == 'none'
             ? $LANGUAGE : $user_language );
@@ -227,8 +226,7 @@ if ( $id > 0 && empty ( $error ) ) {
             . ' err=' . $mail->ErrorInfo() );
         } else {
           error_log( 'del_entry: skipped ' . $partlogin[$i]
-            . ' email_del_pref=' . get_pref_setting ( $partlogin[$i], 'EMAIL_EVENT_DELETED' )
-            . ' has_email=' . ( empty( $tempemail ) ? 'no' : 'yes' ) );
+            . ' note=no_email_or_nonuser_or_boss_or_send_email_off' );
         }
       } else {
         error_log( 'del_entry: not emailing ' . ( isset($partlogin[$i]) ? $partlogin[$i] : '?' )
@@ -276,8 +274,7 @@ if ( $id > 0 && empty ( $error ) ) {
             $user_language = get_pref_setting ( $del_user, 'LANGUAGE' );
             user_load_variables ( $del_user, 'temp' );
             if ( ! empty ( $tempemail ) &&
-              get_pref_setting ( $del_user, 'EMAIL_EVENT_DELETED' ) == 'Y' &&
-                boss_must_be_notified ( $login, $del_user ) &&
+              boss_must_be_notified ( $login, $del_user ) &&
                 $SEND_EMAIL != 'N' ) {
               reset_language ( empty ( $user_language ) ||
                 $user_language == 'none' ? $LANGUAGE : $user_language );

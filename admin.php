@@ -876,22 +876,10 @@ if ( ! $error ) {
    . translate ( 'Email format preference' ) . ':</label>'
    . print_radio ( 'EMAIL_HTML',
     ['Y'=> translate ( 'HTML' ), 'N'=>translate( 'Plain Text' )] ) . '</div>'
-   . '<div class="form-inline mt-1 mb-2"><label title="' . tooltip ( 'email-include-ics' ) . '">'
-   . translate ( 'Include iCalendar attachments' ) . ':</label>'
-   . print_radio( 'EMAIL_ATTACH_ICS' ) . '</div>'
    . '<div class="form-inline mt-1 mb-2"><label title="' . tooltip ( 'email-event-reminders-help' ) . '">'
    . translate ( 'Event reminders' ) . ':</label>'
    . print_radio( 'EMAIL_REMINDER' ) . '</div>'
-   . '<div class="form-inline mt-1 mb-2"><label title="' . tooltip ( 'email-event-added' ) . '">'
-   . translate ( 'Events added to my calendar' ) . ':</label>'
-   . print_radio ( 'EMAIL_EVENT_ADDED' ) . '</div>
-            <div class="form-inline mt-1 mb-2"><label title="' . tooltip ( 'email-event-updated' ) . '">'
-   . translate ( 'Events updated on my calendar' ) . ':</label>'
-   . print_radio ( 'EMAIL_EVENT_UPDATED' ) . '</div>
-            <div class="form-inline mt-1 mb-2"><label title="' . tooltip ( 'email-event-deleted' ) . '">'
-   . translate ( 'Events removed from my calendar' ) . ':</label>'
-   . print_radio ( 'EMAIL_EVENT_DELETED' ) . '</div>
-            <div class="form-inline mt-1 mb-2"><label title="' . tooltip ( 'email-event-rejected' ) . '">'
+   . '<div class="form-inline mt-1 mb-2"><label title="' . tooltip ( 'email-event-rejected' ) . '">'
    . translate ( 'Event rejected by participant' ) . ':</label>'
    . print_radio ( 'EMAIL_EVENT_REJECTED' ) . '</div>
             <div class="form-inline mt-1 mb-2"><label title="' . tooltip ( 'email-event-create' ) . '">'
