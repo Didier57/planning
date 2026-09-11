@@ -185,9 +185,11 @@ if ( $id > 0 && empty ( $error ) ) {
     for ( $i = 0, $cnt = count ( $partlogin ); $i < $cnt; $i++ ) {
       // Log the deletion.
       activity_log ( $id, $login, $partlogin[$i], $log_delete, '' );
-      // Check UAC.
-      $can_email = ( access_is_enabled()
-        ? access_user_calendar ( 'email', $partlogin[$i], $login ) : false );
+      // Check UAC. Default to allowed when access control is disabled
+      // (mirrors the email handling in edit_entry_handler.php).
+      $can_email = true;
+      if ( access_is_enabled() )
+        $can_email = access_user_calendar ( 'email', $partlogin[$i], $login );
 
       // Don't email the logged in user.
       if ( $can_email && $partlogin[$i] != $login ) {
@@ -246,6 +248,44 @@ if ( $id > 0 && empty ( $error ) ) {
   WHERE cal_id = ?
     AND cal_login = ?', ['D', $id, $del_user] );
         activity_log ( $id, $login, $login, $log_reject, '' );
+
+        // Notify the user whose calendar the event was removed from,
+        // unless that user is the one performing the deletion.
+        if ( $del_user != $login ) {
+          $res = dbi_execute ( 'SELECT cal_name, cal_date, cal_time
+            FROM webcal_entry WHERE cal_id = ?', [$id] );
+          if ( $res ) {
+            $drow = dbi_fetch_row ( $res );
+            $dname = $drow[0];
+            $ddate = $drow[1];
+            dbi_free_result ( $res );
+            set_env ( 'TZ', get_pref_setting ( $del_user, 'TIMEZONE' ) );
+            $user_language = get_pref_setting ( $del_user, 'LANGUAGE' );
+            user_load_variables ( $del_user, 'temp' );
+            if ( ! empty ( $tempemail ) &&
+              get_pref_setting ( $del_user, 'EMAIL_EVENT_DELETED' ) == 'Y' &&
+                boss_must_be_notified ( $login, $del_user ) &&
+                $SEND_EMAIL != 'N' ) {
+              reset_language ( empty ( $user_language ) ||
+                $user_language == 'none' ? $LANGUAGE : $user_language );
+              // Plain text notification: for a single-user removal we
+              // cannot build a correct CANCELLED request (the event still
+              // exists for other participants), so no calendar part here.
+              $mail->WC_Send ( $login_fullname, $tempemail, $tempfullname,
+                $dname,
+                str_replace ( 'XXX', $tempfullname,
+                  translate ( 'Hello, XXX.' ) ) . ".\n\n"
+                 . str_replace ( 'XXX', $login_fullname,
+                  translate ( 'XXX has canceled an appointment.' ) ) . "\n"
+                 . str_replace ( 'XXX', $dname,
+                  translate ( 'Subject XXX' ) ) . "\"\n"
+                 . str_replace ( 'XXX', date_to_str ( $ddate ),
+                  translate ( 'Date XXX' ) ) . "\n\n",
+                get_pref_setting ( $del_user, 'EMAIL_HTML' ), $login_email );
+              activity_log ( $id, $login, $del_user, $log_delete, '' );
+            }
+          }
+        }
       }
     }
   }
