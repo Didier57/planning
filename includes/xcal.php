@@ -222,11 +222,21 @@ function export_get_attendee( $id, $export, $include_cancelled = false ) {
       } else {
         // Use "Full Name <email>" if we have it,
         // Just "login" if that's all we have.
-        $attendee[$count] .= ';CN="'
-        . (empty($user['cal_firstname']) && empty($user['cal_lastname'])
-          ? $user['cal_login']
-          : mb_convert_encoding($user['cal_firstname'], 'UTF-8', mb_detect_encoding($user['cal_firstname'])) . ' '
-          . mb_convert_encoding($user['cal_lastname'], 'UTF-8', mb_detect_encoding($user['cal_lastname']))) . '"';
+        $attendee[$count] .= ';CN="';
+        if ( empty($user['cal_firstname']) && empty($user['cal_lastname']) )
+          $attendee[$count] .= $user['cal_login'];
+        else {
+          $firstName = empty($user['cal_firstname'])
+            ? ''
+            : mb_convert_encoding($user['cal_firstname'], 'UTF-8',
+                mb_detect_encoding($user['cal_firstname']));
+          $lastName = empty($user['cal_lastname'])
+            ? ''
+            : mb_convert_encoding($user['cal_lastname'], 'UTF-8',
+                mb_detect_encoding($user['cal_lastname']));
+          $attendee[$count] .= trim($firstName . ' ' . $lastName);
+        }
+        $attendee[$count] .= '"';
         if (!empty($user['cal_email'])) {
           $attendee[$count] .= ':MAILTO:' . $user['cal_email'];
         } else if (strpos('@', $EMAIL_FALLBACK_FROM) > 0) {
@@ -959,7 +969,7 @@ function export_vcal ( $id ) {
     echo "END:VCALENDAR\r\n";
 } //end function
 
-function export_ical ( $id = 'all', $attachment = false, $method = 'PUBLISH' ) {
+function export_ical ( $id = 'all', $attachment = false, $method = 'PUBLISH', $sequence = 0 ) {
   global $cal_type, $cat_filter, $login,
   $publish_fullname, $use_vtimezone, $vtimezone_data, $EMAIL_FALLBACK_FROM;
 
@@ -1101,13 +1111,15 @@ function export_ical ( $id = 'all', $attachment = false, $method = 'PUBLISH' ) {
       $orgName = ( empty ( $publish_fullname ) ? $login : $publish_fullname );
       $orgName = addcslashes ( $orgName, "\54\73\134" );
       $Vret .= "DTSTAMP:" . gmdate('Ymd\THis\Z') . "\r\n";
-      $Vret .= "SEQUENCE:0\r\n";
+      $Vret .= "SEQUENCE:" . max(0, (int)$sequence) . "\r\n";
       if ( ! empty ( $EMAIL_FALLBACK_FROM ) &&
         preg_match ( '/^[^@\s]+@[^@\s]+$/', $EMAIL_FALLBACK_FROM ) ) {
         $Vret .= 'ORGANIZER;CN="' . $orgName . '":MAILTO:' . $EMAIL_FALLBACK_FROM . "\r\n";
       }
     }
 
+    $name = (string)$name;
+    $description = (string)$description;
     $name = preg_replace( "/\r/", ' ', $name );
     // escape,;  \ in octal ascii
     $name = addcslashes ( $name, "\54\73\134" );

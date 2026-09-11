@@ -3,6 +3,11 @@ require_once 'includes/init.php';
 require_once 'includes/classes/WebCalMailer.php';
 $mail = new WebCalMailer;
 
+// Delete = latest iCal revision: SEQUENCE must be strictly greater than the
+// original invite (0) and any update (1) so Outlook/Exchange auto-process
+// this cancellation instead of treating it as out-of-order.
+$mail->icalSequence = 2;
+
 $can_edit = $my_event = false;
 $other_user = '';
 

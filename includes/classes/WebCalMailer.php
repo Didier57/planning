@@ -29,6 +29,11 @@ class WebCalMailer {
   // Outlook meeting invitation with Exchange AutoAccept needs 'REQUEST').
   public $icalMethod = 'REQUEST';
 
+  // SEQUENCE for the iCal REQUEST part. Must be strictly increasing between
+  // the original invite, updates and cancellations or Outlook/Exchange
+  // treat the message as out-of-order and will not auto-process it.
+  public $icalSequence = 0;
+
   /**
    * Constructor
    */
@@ -151,7 +156,7 @@ class WebCalMailer {
       // Never let a calendar export failure prevent the email from being
       // sent: fall back to a plain text email in that case.
       try {
-        $ical = export_ical( $id, true, $this->icalMethod );
+        $ical = export_ical( $id, true, $this->icalMethod, $this->icalSequence );
       } catch ( \Throwable $e ) {
         error_log( 'WebCalMailer: export_ical failed for id=' . $id
           . ': ' . $e->getMessage() );

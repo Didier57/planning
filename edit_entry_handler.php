@@ -935,6 +935,10 @@ if( empty( $error ) ) {
   if( empty( $from ) && ! empty( $EMAIL_FALLBACK_FROM ) )
     $from = $EMAIL_FALLBACK_FROM;
 
+  // Assign the iCal SEQUENCE so Outlook/Exchange auto-process this request
+  // (0 on create, then monotonically increasing for updates/cancellations).
+  $mail->icalSequence = ( $newevent ? 0 : 1 );
+
   // Check if participants have been removed and send out emails.
   if( ! $newevent && count( $old_status ) > 0 ) {
     foreach ($old_status as $old_participant => $dummy) {
