@@ -6,6 +6,10 @@ LABEL vendor="k5n.us"
 # Install mysqli extension
 RUN docker-php-ext-install mysqli
 
+# Raise PHP upload limits for the admin SQL import page
+# (default upload_max_filesize is 2M, too small for a DB dump).
+RUN printf 'upload_max_filesize = 32M\npost_max_size = 32M\nmemory_limit = 256M\n' > $PHP_INI_DIR/conf.d/zz-uploads.ini
+
 # Copy all files except those in .dockerignore
 COPY . /var/www/html/
 

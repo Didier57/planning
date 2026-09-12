@@ -265,7 +265,23 @@ if ( $doImport ) {
   if ( empty ( $_FILES['sqlfile'] )
       || $_FILES['sqlfile']['error'] != UPLOAD_ERR_OK
       || ! is_uploaded_file ( $_FILES['sqlfile']['tmp_name'] ) ) {
-    $errors[] = translate ( 'No valid file was uploaded.' );
+    $errMsg = translate ( 'No valid file was uploaded.' );
+    $upErr = empty ( $_FILES['sqlfile'] ) ? -1 : $_FILES['sqlfile']['error'];
+    if ( $upErr != UPLOAD_ERR_OK ) {
+      $names = [ 1 => 'UPLOAD_ERR_INI_SIZE',
+        2 => 'UPLOAD_ERR_FORM_SIZE',
+        3 => 'UPLOAD_ERR_PARTIAL',
+        4 => 'UPLOAD_ERR_NO_FILE',
+        6 => 'UPLOAD_ERR_NO_TMP_DIR',
+        7 => 'UPLOAD_ERR_CANT_WRITE',
+        8 => 'UPLOAD_ERR_EXTENSION' ];
+      $errMsg .= (! isset ( $names[$upErr] ) ? '' : ' (' . $names[$upErr] . ')');
+      if ( $upErr == UPLOAD_ERR_INI_SIZE && ini_get ( 'upload_max_filesize' ) ) {
+        $errMsg .= '. ' . translate ( 'Server upload limit is' ) . ' '
+          . ini_get ( 'upload_max_filesize' );
+      }
+    }
+    $errors[] = $errMsg;
   } elseif ( getPostValue ( 'confirm' ) != '1' ) {
     $errors[] = translate ( 'The wipe confirmation checkbox must be ticked.' );
   }

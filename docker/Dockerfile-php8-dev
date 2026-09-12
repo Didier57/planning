@@ -19,6 +19,10 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd
 
+# Raise PHP upload limits for the admin SQL import page
+# (default upload_max_filesize is 2M, too small for a DB dump).
+RUN printf 'upload_max_filesize = 32M\npost_max_size = 32M\nmemory_limit = 256M\n' > $PHP_INI_DIR/conf.d/zz-uploads.ini
+
 # Set working directory
 WORKDIR /var/www/html
 

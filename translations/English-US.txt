@@ -302,6 +302,7 @@ About the WebCalendar plugin for WordPress: About the WebCalendar plugin for Wor
 #
 Import SQL: Import SQL
 No valid file was uploaded.: No valid file was uploaded.
+Server upload limit is: Server upload limit is
 The wipe confirmation checkbox must be ticked.: The wipe confirmation checkbox must be ticked.
 The uploaded file could not be read.: The uploaded file could not be read.
 Table does not exist in the target database.: Table does not exist in the target database.

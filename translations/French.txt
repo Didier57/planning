@@ -524,6 +524,7 @@ Import SQL: Importer SQL
 Table: Table
 Rows: Lignes
 No valid file was uploaded.: Aucun fichier valide n'a été transféré.
+Server upload limit is: La limite d'envoi du serveur est de
 The wipe confirmation checkbox must be ticked.: La case de confirmation d'effacement doit être cochée.
 The uploaded file could not be read.: Le fichier transféré n'a pas pu être lu.
 Table does not exist in the target database.: La table n'existe pas dans la base de données cible.
