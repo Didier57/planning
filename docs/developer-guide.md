@@ -49,7 +49,6 @@ Request lifecycle:
 ├── tests/                 PHPUnit tests and test utilities
 ├── docker/                Docker configurations and Selenium tests
 ├── docs/                  Documentation
-├── mcp.php                MCP server for AI assistant integration
 └── composer.json          PHP dependency definitions
 ```
 
@@ -149,7 +148,6 @@ Config values are stored in the `webcal_config` (system-wide) and `webcal_user_p
 | twbs/bootstrap-icons      | 1.10.*   | Icon set             |
 | tinymce/tinymce           | 7.7.*    | Rich text editor     |
 | phpmailer/phpmailer       | 7.0.*    | Email sending        |
-| mcp/sdk                   | ^0.3.0   | MCP server support   |
 
 ### Development (composer.json require-dev)
 
@@ -219,10 +217,6 @@ CSS theme files are located in `includes/css/`. Add or modify stylesheets there 
 ### Custom event fields (site extras)
 
 Additional event fields can be configured through the admin UI without code changes.
-
-### MCP server
-
-`mcp.php` in the project root exposes calendar operations as MCP tools for AI assistant integration. It uses STDIO transport and requires an API token set via the `MCP_TOKEN` environment variable. Available tools: `list_events`, `get_user_info`, `search_events`, `add_event`.
 
 ## Translations
 

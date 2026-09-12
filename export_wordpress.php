@@ -9,8 +9,8 @@
  *  metadata comment header (WebCalendar version, server timezone, charset)
  *  the wizard uses to convert values correctly.
  *
- *  Deliberately NOT exported: password hashes (cal_passwd), API tokens
- *  (cal_api_token), binary category icons, groups, views, reports, access
+ *  Deliberately NOT exported: password hashes (cal_passwd), API tokens,
+ *  binary category icons, groups, views, reports, access
  *  control rows and attachments. The WordPress plugin maps users to
  *  WordPress accounts and sends password-reset emails instead.
  *

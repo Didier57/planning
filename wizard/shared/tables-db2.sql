@@ -11,7 +11,6 @@ CREATE TABLE webcal_user (
   cal_title VARCHAR(75),
   cal_birthday INT,
   cal_last_login INT,
-  cal_api_token VARCHAR(255),
   PRIMARY KEY ( cal_login )
 );
 CREATE TABLE webcal_entry (

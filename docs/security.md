@@ -11,7 +11,6 @@ This guide covers secure deployment and maintenance of WebCalendar.
 - [Authentication Security](#authentication-security)
 - [Session Security](#session-security)
 - [Email Security](#email-security)
-- [MCP Server Security](#mcp-server-security)
 
 ## Built-in Security Features
 
@@ -150,14 +149,3 @@ If using email notifications (`tools/send_reminders.php`):
 - Use TLS/STARTTLS for SMTP connections.
 - Test with `tools/send_test_email.php` before deploying.
 
-## MCP Server Security
-
-The MCP server (`mcp.php`) provides AI assistant access to calendar data.
-
-- **Disable by default** — set `MCP_SERVER_ENABLED=N` unless needed.
-- **API tokens** — each user generates their own token in preferences.
-  Tokens are passed via `MCP_TOKEN` environment variable (STDIO) or
-  `X-MCP-Token` / `Authorization: Bearer` headers (HTTP).
-- **Rate limiting** — configure `MCP_RATE_LIMIT` to prevent abuse.
-- **Audit logging** — MCP requests are logged for review.
-- Restrict network access to the MCP HTTP endpoint if exposed.

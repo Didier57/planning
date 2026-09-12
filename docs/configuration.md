@@ -117,8 +117,6 @@ Common settings (partial list):
 | `REQUIRE_APPROVALS` | `Y`/`N` | Require event approval |
 | `PUBLIC_ACCESS` | `Y`/`N` | Allow anonymous calendar access |
 | `SEND_EMAIL` | `Y`/`N` | Enable email notifications |
-| `MCP_SERVER_ENABLED` | `Y`/`N` | Enable MCP server for AI assistants |
-| `MCP_RATE_LIMIT` | integer | MCP requests per minute limit |
 
 Defaults for all settings are defined in
 `includes/default_config.php`.

@@ -59,7 +59,6 @@ The following are in scope for security reports:
 - Remote code execution
 - Path traversal or local file inclusion
 - Information disclosure (credentials, PII, internal paths)
-- MCP server token or access control issues
 
 The following are out of scope:
 

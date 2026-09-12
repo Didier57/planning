@@ -365,14 +365,6 @@ log "Verified: Version updated from $FROM_VERSION to $NEW_VERSION"
 # Get schema for detailed verification
 WEBCAL_USER_SCHEMA=$(sqlite3 "$DB_TMPFILE" ".schema webcal_user")
 
-# Check for critical schema changes that should have been applied
-# v1.9.13 added cal_api_token column
-if echo "$WEBCAL_USER_SCHEMA" | grep -q "cal_api_token"; then
-  log "Verified: cal_api_token column added to webcal_user (v1.9.13+)"
-else
-  error_exit "cal_api_token column NOT found in webcal_user. Upgrade SQL failed to execute correctly."
-fi
-
 # v1.1.2+ should have added cal_enabled, cal_telephone, cal_address, cal_title, cal_birthday, cal_last_login
 # Check that at least some of these exist (they should since v1.3.0 fixture has them)
 if echo "$WEBCAL_USER_SCHEMA" | grep -q "cal_enabled"; then
@@ -407,11 +399,6 @@ done
 # Summary
 log "Upgrade verification summary:"
 log "  - Version updated: $FROM_VERSION -> $NEW_VERSION"
-if echo "$WEBCAL_USER_SCHEMA" | grep -q "cal_api_token"; then
-  log "  - Schema changes: APPLIED (cal_api_token found)"
-else
-  log "  - Schema changes: PARTIAL (SQLite-specific SQL may be needed)"
-fi
 log "  - Data preserved: Yes (admin user exists)"
 log "  - Core tables: All present"
 

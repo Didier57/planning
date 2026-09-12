@@ -187,7 +187,6 @@ alongside the zip, and both files are also embedded inside the zip at the repo r
 | `docs/upgrade-guide.md` (4 KB) | likely YES | Essential. |
 | `docs/user-guide.md` (6 KB) | likely YES | End-user oriented. |
 | `docs/docker.md` (4 KB) | maybe | Useful for dockerized installs. |
-| `docs/mcp-server.md` (9 KB) | maybe | Narrow audience; also on website. |
 | `docs/WebCalendar-Database.md` (26 KB) | maybe | Schema reference, useful for ops. |
 | `docs/developer-guide.md` (12 KB) | PROBABLY NO | Internal/contributor doc. |
 | `docs/migration-v2.md` (9 KB) | PROBABLY NO | Forward-looking dev doc. |

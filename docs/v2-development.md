@@ -6,12 +6,12 @@ WebCalendar uses a development/stable release model:
 
 | Series | Role | What goes in |
 |--------|------|--------------|
-| **1.9.x** | Development | New features, installer rewrite, MCP, env-var config, doc modernization |
+| **1.9.x** | Development | New features, installer rewrite, env-var config, doc modernization |
 | **2.0.x** | Stable/production | Bug fixes, security hardening, code quality. No new features. |
 | **2.1.x** | Next development | New functional changes, architectural work |
 
 The 1.9.x series was the development line that introduced the wizard
-installer, MCP server support, environment variable configuration, and
+installer, environment variable configuration, and
 modernized documentation. The 2.0.x series is the production release
 of that work.
 

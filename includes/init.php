@@ -59,7 +59,6 @@ require_once 'includes/config.php';
 require_once 'includes/dbi4php.php';
 require_once 'includes/formvars.php';
 require_once 'includes/functions.php';
-require_once 'includes/mcp-loader.php';
 
 $WebCalendar->initializeFirstPhase();
 

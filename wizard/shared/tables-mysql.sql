@@ -35,8 +35,6 @@ CREATE TABLE webcal_user (
   cal_birthday INT NULL,
  /* user's last log in date */
   cal_last_login INT NULL,
-  /* user's API token for MCP server */
-  cal_api_token VARCHAR(255) NULL,
   PRIMARY KEY ( cal_login )
 );
 

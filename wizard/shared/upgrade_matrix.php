@@ -61,10 +61,6 @@ $database_upgrade_matrix = [
    ["INSERT INTO webcal_entry (cal_id, cal_name, cal_create_by, cal_date, cal_duration, cal_url) VALUES (-999, 'Test', 'nobody', 20201231, 0, '01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789')",
     "DELETE FROM webcal_entry WHERE cal_id = -999",
     "v1.9.11", "upgrade_v1.9.12"],
-   // Upgrade from 1.9.12 -> 1.9.13
-   ["INSERT INTO webcal_user (cal_login, cal_api_token) VALUES ('test_user', 'test_token')",
-    "DELETE FROM webcal_user WHERE cal_login = 'test_user'",
-    "v1.9.12", "upgrade_v1.9.13"],
    // don't change this array element
    ["","", $PROGRAM_VERSION, ""]
 ];

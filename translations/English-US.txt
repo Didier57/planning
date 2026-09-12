@@ -600,7 +600,6 @@ When I am the boss: When I am the boss
 Subscribe/Publish: Subscribe/Publish
 Custom Scripts: Custom Scripts
 #
-MCP: MCP
 Language: Language
 language-help: Specifies which language to use.
 Your browser default language is XXX.: Your browser default language is "XXX".
@@ -716,22 +715,6 @@ custom-header-help: Allows a custom HTML snippet to be included in the top of ev
 Custom header: Custom header
 custom-trailer-help: Allows a custom HTML snippet to be included at the end of every page.
 Custom trailer: Custom trailer
-MCP Server: MCP Server
-mcp-api-token-help: API token for accessing WebCalendar data via Model Context Protocol. Generate a new token to replace the current one.
-MCP API Token: MCP API Token
-#
-Copy this token now. For security it is stored hashed and cannot be shown again.: Copy this token now. For security it is stored hashed and cannot be shown again.
-Generate New Token: Generate New Token
-#
-Clear Token: Clear Token
-#
-MCP Endpoint URL: MCP Endpoint URL
-#
-Sample agent configuration: Sample agent configuration
-#
-Paste this into your AI agent MCP settings file (for example, mcp_settings.json).: Paste this into your AI agent MCP settings file (for example, mcp_settings.json).
-#
-Replace YOUR_MCP_TOKEN with a token generated above.: Replace YOUR_MCP_TOKEN with a token generated above.
 Reset Colors: Reset Colors
 
 ########################################
@@ -932,23 +915,6 @@ Extra exclusion patterns: Extra exclusion patterns
 One glob pattern per line; lines starting with # are comments. Directory prefixes end with / (e.g. pub/uploads/). Applied in addition to the built-in defaults.: One glob pattern per line; lines starting with # are comments. Directory prefixes end with / (e.g. pub/uploads/). Applied in addition to the built-in defaults.
 Documentation: Documentation
 #
-MCP Server Configuration: MCP Server Configuration
-#
-MCP Server is not available.: MCP Server is not available.
-#
-The MCP SDK PHP package must be installed. Run composer install: The MCP SDK PHP package must be installed. Run composer install
-mcp-server-enabled-help: Enable the Model Context Protocol server to allow AI assistants to query WebCalendar data using API tokens.
-MCP Server enabled: MCP Server enabled
-mcp-write-access-help: Allow MCP clients to perform write operations (add events, modify data). Disable for read-only access.
-MCP Write Access: MCP Write Access
-mcp-rate-limit-help: Maximum number of MCP requests allowed per user per hour to prevent abuse.
-MCP Rate Limit (requests/hour): MCP Rate Limit (requests/hour)
-mcp-cors-origins-help: Configure which origins are allowed to make cross-origin MCP requests. Use * to allow all origins, or specify custom origins below.
-MCP CORS Allowed Origins: MCP CORS Allowed Origins
-mcp-cors-custom-help: Specify allowed origins as a comma-separated list (e.g., https://example.com,https://another.com). Leave empty to disable CORS.
-Custom Origins (comma-separated): Custom Origins (comma-separated)
-#
-Each user connects their AI agent with their own personal API token, generated on their Preferences MCP tab, where a ready-to-use sample configuration is shown.: Each user connects their AI agent with their own personal API token, generated on their Preferences MCP tab, where a ready-to-use sample configuration is shown.
 email-mailer: Choose email type (SMTP, PHP mail, sendmail)
 Email Mailer: Email Mailer
 email-smtp-host: Hostname(s) of SMTP server(s) separated by commas

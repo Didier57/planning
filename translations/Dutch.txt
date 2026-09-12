@@ -965,11 +965,6 @@ Entry interval: Afspraak interval
 hour: uur
 minute: minuut
 Miscellaneous: Allerlei
-mcp-api-token-help: API token om WebCalendar data via Model Context Protocol te benaderen. Genereer een nieuwe token om de huidge te vervangen.
-MCP API Token: =
-Copy this token now. For security it is stored hashed and cannot be shown again.: Sla dit token nu op. Voor de veiligheid wordt het gehasht opgeslagen en kan niet teruggehaald worden.
-Generate New Token: Genereer Nieuwe Token
-Clear Token: Token Wissen
 email-format: keis voorkeur voor HTML or platte tekstt berichten
 Email format preference: Email formaat voorkeur
 HTML: =
@@ -1126,7 +1121,6 @@ Bottom: Onder
 Top: Boven
 Anyone: Wie dan ook
 Participant: Deelnemer
-MCP Server: =
 System options: Systeemopties
 Translated Name (XXX): Vertaalde Naam (XXX)
 Site security: =
@@ -1212,19 +1206,6 @@ Extra exclude patterns applied to the file-integrity scan: Extra uitsluitsel pat
 Extra exclusion patterns: Extra uitsluitsel patonen
 One glob pattern per line; lines starting with # are comments. Directory prefixes end with / (e.g. pub/uploads/). Applied in addition to the built-in defaults.: Een glob patroon per regel; regels beginnend met # zijn commentaar. Map prefixes eindigen met / (b.v. pub/uploads/). Deze worden toegepast bovenop de ingebouwde defaults.
 Documentation: Documentatie
-MCP Server Configuration: MCP Server Configuratie
-MCP Server is not available.: MCP Server is niet beschikbaar.
-The MCP SDK PHP package must be installed. Run: composer require mcp/sdk: MCP SDK PHP moet geinstalleerd worden. Voer uit: composer require mcp/sdk
-mcp-server-enabled-help: Model Context Protocol server aanzetten om AI assistenten WebCalendar data te laten benaderen m.b.v. API tokens.
-MCP Server enabled: =
-mcp-write-access-help: Sta toe dat MCP clients schrijf operaties uitvoeren (gebeurtenissen toevoegen, gegevens aanpassen). Uitschakelen voor alleen-lezen toegang.
-MCP Write Access: MCP Schrijf Toegang
-mcp-rate-limit-help: Maximale aantal MCP verzoeken toegestaan per gebruiker per uur om misbruik te voorkomen.
-MCP Rate Limit (requests/hour): MCP Rate Limit (verzoeken per uur)
-mcp-cors-origins-help: Welke origins toegestaan zijn om cross-origin MCP verzoeken uit te voeren. gebruik * om alles toe te staan, of geef specifieke custom origins op hieronder.
-MCP CORS Allowed Origins: =
-mcp-cors-custom-help: Geef toegestane origins op als een komma-gescheiden lijst (b.v. https://example.com,https://example.nl). Leeg laten om CORS uit te schakelen.
-Custom Origins (comma-separated): Custom Origins (komma-gescheiden)
 email-mailer: email-verstuurder
 Email Mailer: Email verstuurder
 email-smtp-host: email-smtp-host

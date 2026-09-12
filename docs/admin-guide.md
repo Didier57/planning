@@ -224,7 +224,6 @@ The following categories of settings are available through the admin interface:
 - **Categories** -- Define event categories for organization and filtering.
 - **Custom event fields (site extras)** -- Add custom fields to the event entry form. See [Custom Event Fields](#custom-event-fields-site-extras) below.
 - **Nonuser calendars** -- Create calendars for rooms, resources, or other non-person entities.
-- **MCP server** -- Enable or disable the Model Context Protocol server for AI assistant integration. Controlled by the `MCP_SERVER_ENABLED` and `MCP_RATE_LIMIT` settings.
 
 ## Configuring as an Event Calendar
 

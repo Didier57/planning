@@ -36,7 +36,6 @@ WebCalendar is a **multi-user, web-based calendar application** built with PHP. 
 - **iCal Import/Export** - Import and export calendar data in iCalendar format
 - **External Integration** - LDAP, IMAP, and custom authentication bridges
 - **Docker Ready** - Pre-built Docker images for easy deployment
-- **MCP Server** - Model Context Protocol support for AI assistant integration
 
 ## Requirements
 
@@ -194,7 +193,6 @@ Create `includes/config-app-yourapp.php` to override settings dynamically.
 - PHP 8.2+ required (tested against 8.2, 8.3, 8.4)
 - New web-based installation/upgrade wizard
 - Headless CLI installer for automated deployments
-- MCP server for AI assistant integration
 - Multi-database Docker test infrastructure
 
 ### v2.0.0 (Planned)
@@ -210,7 +208,6 @@ Create `includes/config-app-yourapp.php` to override settings dynamically.
 - [Upgrade Guide](docs/upgrade-guide.md) - Upgrading from previous versions
 - [Database Schema](docs/WebCalendar-Database.md) - Table definitions
 - [Developer Guide](docs/developer-guide.md) - Architecture, coding standards, testing
-- [MCP Server](docs/mcp-server.md) - AI assistant integration
 
 Browse the [full documentation](https://craigk5n.github.io/webcalendar/) or see the [docs index](docs/index.md) on GitHub.
 

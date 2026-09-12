@@ -100,10 +100,6 @@ ALTER TABLE webcal_nonuser_cals MODIFY cal_url VARCHAR(255);
 ALTER TABLE webcal_entry MODIFY cal_url VARCHAR(255);
 ```
 
-**v1.9.13** — MCP API token:
-```sql
-ALTER TABLE webcal_user ADD cal_api_token VARCHAR(255) DEFAULT NULL;
-```
 
 **v1.9.16** — Blob table ensured:
 ```sql
@@ -143,14 +139,6 @@ These environment variables were added in the v1.9.x series:
 | `WEBCALENDAR_DB_LOGIN` | v1.9.12 | Database username |
 | `WEBCALENDAR_DB_PASSWORD` | v1.9.12 | Database password |
 | `WEBCALENDAR_MODE` | v1.9.12 | `dev` or `prod` |
-| `MCP_TOKEN` | v1.9.13 | MCP server API token |
-
-### New Admin Settings
-
-| Setting | Version | Purpose |
-|---------|---------|---------|
-| `MCP_SERVER_ENABLED` | v1.9.13 | Enable/disable MCP server |
-| `MCP_RATE_LIMIT` | v1.9.13 | MCP requests per minute |
 
 ## PHP Version Requirements
 

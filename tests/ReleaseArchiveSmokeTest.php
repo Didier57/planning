@@ -11,8 +11,8 @@ use PHPUnit\Framework\TestCase;
  * release-files resolves to a real, tracked file. It CANNOT catch a runtime
  * file that shipped code needs but that was never *added* to release-files —
  * there is nothing listed for it to check against. That reverse gap is what
- * broke releases in issue #666: includes/mcp-loader.php is require_once'd
- * unconditionally at includes/init.php:63, but was never in the manifest, so
+ * broke releases in issue #666: a bootstrap file was require_once'd
+ * unconditionally at includes/init.php, but was never in the manifest, so
  * every release fataled on startup. The same shape hid the signed-manifest
  * Security classes (required by the shipped security_audit.php).
  *
@@ -58,9 +58,9 @@ final class ReleaseArchiveSmokeTest extends TestCase
    * The staged tree has no settings.php, so config's do_config() (reached
    * at init.php:65) dies cleanly right after the bootstrap require chain has
    * run — it either redirects to the (now-shipped, issue #667) wizard or
-   * dies for lack of config. A file missing from that chain — like
-   * mcp-loader.php at line 63 — surfaces as a "Failed opening required"
-   * fatal BEFORE that death, which is exactly what we key on.
+* dies for lack of config. A file missing from that chain — like
+ * an include at init.php:62 — surfaces as a "Failed opening required"
+ * fatal BEFORE that death, which is exactly what we key on.
    */
   public function testStagedInitBootsWithoutMissingIncludes(): void
   {
@@ -267,7 +267,7 @@ PHP;
    */
   private static function interpretRequireArgs(array $args, string $dirOfFile): array
   {
-    // Bare literal: require_once 'includes/mcp-loader.php';
+    // Bare literal: require_once 'includes/translate.php';
     if (count($args) === 1 && is_array($args[0]) && $args[0][0] === T_CONSTANT_ENCAPSED_STRING) {
       $lit = self::unquote($args[0][1]);
       return array_values(array_unique([

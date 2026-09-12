@@ -29,8 +29,6 @@ docs/faq.md
 docs/glossary.md
 docs/import-export.md
 docs/index.md
-docs/installation.md
-docs/mcp-server.md
 docs/release-signing.md
 docs/security.md
 docs/troubleshooting.md
@@ -185,7 +183,6 @@ includes/js/visible.js
 includes/js/visible.php
 includes/js/weekHover.js
 includes/load_assets.php
-includes/mcp-loader.php
 includes/menu.php
 includes/moon_phases.php
 includes/settings.php.orig
@@ -209,7 +206,6 @@ LICENSE
 list_unapproved.php
 login-app.php
 login.php
-mcp.php
 minical.php
 month.php
 nulogin.php

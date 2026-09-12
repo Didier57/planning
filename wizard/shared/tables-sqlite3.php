@@ -13,7 +13,6 @@ return [
         cal_title VARCHAR(75) NULL,
         cal_birthday INT NULL,
         cal_last_login INT NULL,
-        cal_api_token VARCHAR(255) NULL,
         PRIMARY KEY (cal_login)
     )",
     // NOTE: No default admin user is created here. Earlier versions shipped a

@@ -132,7 +132,6 @@ if ( ! $error ) {
     'groups', translate ( 'Groups' ),
     'nonuser', translate ( 'Resource Calendars' ),
     'other', translate ( 'Other' ),
-    'mcp', translate ( 'MCP Server' ),
     'email', translate ( 'Email' ),
     'colors', translate ( 'Colors' )];
   $tabs = '<ul class="nav nav-tabs">';
@@ -769,61 +768,8 @@ if ( ! $error ) {
    </fieldset>
     </div></div>
 
-<!-- BEGIN MCP SERVER -->
-  <div class="tab-pane container fade" id="' . $tabs_ar[12] . '">
-  <div class="form-group">
-    <fieldset class="border p-2"><legend>' . translate('MCP Server Configuration') . '</legend>'
-    . ( ! is_mcp_available()
-      ? '<p class="bold"><span style="color: #cc0000;">' . translate( 'MCP Server is not available.' ) . '</span></p><p>'
-        . translate( 'The MCP SDK PHP package must be installed. Run composer install' ) . '</p>'
-      : '<div class="form-inline mt-1 mb-2"><label title="' . tooltip ( 'mcp-server-enabled-help' ) . '">'
-        . translate ( 'MCP Server enabled' ) . ':</label>'
-        . print_radio ( 'MCP_SERVER_ENABLED', '', '', 'N' ) . '</div>
-
-        <div class="form-inline mt-1 mb-2"><label title="' . tooltip ( 'mcp-write-access-help' ) . '">'
-        . translate ( 'MCP Write Access' ) . ':</label>'
-        . print_radio ( 'MCP_WRITE_ACCESS', '', '', 'N' ) . '</div>
-
-        <div class="form-inline mt-1 mb-2"><label for="admin_MCP_RATE_LIMIT" title="' . tooltip ( 'mcp-rate-limit-help' ) . '">'
-        . translate ( 'MCP Rate Limit (requests/hour)' ) . ':</label>
-        <input type="number" size="10" name="admin_MCP_RATE_LIMIT" id="admin_MCP_RATE_LIMIT" value="'
-        . htmlspecialchars ( $s['MCP_RATE_LIMIT'] ?? '100' ) . '" min="1" max="1000"></div>
-
-        <div class="form-inline mt-1 mb-2"><label for="admin_MCP_CORS_ORIGINS" title="' . tooltip ( 'mcp-cors-origins-help' ) . '">'
-        . translate ( 'MCP CORS Allowed Origins' ) . ':</label>
-        <select name="admin_MCP_CORS_ORIGINS" id="admin_MCP_CORS_ORIGINS">
-        <option value=""' . (empty($s['MCP_CORS_ORIGINS']) ? ' selected' : '') . '>' . translate('Disabled') . '</option>
-        <option value="*" ' . (($s['MCP_CORS_ORIGINS'] ?? '') === '*' ? 'selected' : '') . '>Allow All (*)</option>
-        <option value="custom"' . ((!empty($s['MCP_CORS_ORIGINS']) && $s['MCP_CORS_ORIGINS'] !== '*' && strpos($s['MCP_CORS_ORIGINS'], ',') !== false) ? ' selected' : '') . '>Custom Origins</option>
-        </select></div>
-        <div class="form-inline mt-1 mb-2"><label for="admin_MCP_CORS_CUSTOM" title="' . tooltip ( 'mcp-cors-custom-help' ) . '">'
-        . translate ( 'Custom Origins (comma-separated)' ) . ':</label>
-        <input type="text" size="40" name="admin_MCP_CORS_CUSTOM" id="admin_MCP_CORS_CUSTOM" value="'
-        . htmlspecialchars ( (!empty($s['MCP_CORS_ORIGINS']) && $s['MCP_CORS_ORIGINS'] !== '*' && strpos($s['MCP_CORS_ORIGINS'], ',') !== false) ? $s['MCP_CORS_ORIGINS'] : '' ) . '" placeholder="https://example.com,https://another.com"></div>'
-        . '<hr class="mt-2">'
-        . '<div class="mt-1"><strong>' . translate ( 'MCP Endpoint URL' ) . ':</strong> '
-        . '<code>' . htmlspecialchars ( getServerUrl() . 'mcp.php' ) . '</code></div>'
-        . '<p class="mt-1"><small>'
-        . translate ( 'Each user connects their AI agent with their own personal API token, generated on their Preferences MCP tab, where a ready-to-use sample configuration is shown.' )
-        . '</small></p>'
-        . '<details class="mt-1"><summary>' . translate ( 'Sample agent configuration' ) . '</summary>'
-        . '<pre class="border rounded p-2 mt-1" style="white-space:pre-wrap;">'
-        . htmlspecialchars ( '{
-  "mcpServers": {
-    "webcalendar": {
-      "url": "' . getServerUrl() . 'mcp.php",
-      "headers": {
-        "X-MCP-Token": "YOUR_MCP_TOKEN"
-      }
-    }
-  }
-}' )
-        . '</pre></details>' )
-    . '</fieldset>
-  </div></div>
-
 <!-- BEGIN EMAIL -->
-   <div class="tab-pane container fade" id="' . $tabs_ar[14] . '">
+   <div class="tab-pane container fade" id="' . $tabs_ar[12] . '">
   <div class="form-group">
           <div class="form-inline mt-1 mb-2"><label title="' . tooltip ( 'email-enabled-help' ) . '">'
    . translate ( 'Email enabled' ) . ':</label>'
@@ -891,7 +837,7 @@ if ( ! $error ) {
         </div>
 
 <!-- BEGIN COLORS -->
-   <div class="tab-pane container fade" id="' . $tabs_ar[16] . '">
+   <div class="tab-pane container fade" id="' . $tabs_ar[14] . '">
   <div class="form-group">
           <fieldset class="border p-2">
             <legend>' . translate ( 'Color options' ) . '</legend>
@@ -934,37 +880,6 @@ if ( ! $error ) {
     <script>\n" . $cch . "
       function reset_colors() {" . $rc . '
       }
-
-      // Handle CORS origin selection
-      document.getElementById("admin_MCP_CORS_ORIGINS").addEventListener("change", function() {
-        var customField = document.getElementById("admin_MCP_CORS_CUSTOM");
-        if (this.value === "*" || this.value === "") {
-          customField.value = "";
-          customField.disabled = true;
-        } else if (this.value === "custom") {
-          customField.disabled = false;
-        }
-      });
-
-      // Before form submission, set the actual CORS value
-      document.querySelector("form[name=\"prefform\"]").addEventListener("submit", function(e) {
-        var corsSelect = document.getElementById("admin_MCP_CORS_ORIGINS");
-        var customField = document.getElementById("admin_MCP_CORS_CUSTOM");
-
-        if (corsSelect.value === "custom") {
-          // Use the custom field value
-          corsSelect.value = customField.value;
-        }
-        // For "*" and "", keep the select value as-is
-      });
-
-      // Initialize CORS field state on page load
-      document.addEventListener("DOMContentLoaded", function() {
-        var corsSelect = document.getElementById("admin_MCP_CORS_ORIGINS");
-        var customField = document.getElementById("admin_MCP_CORS_CUSTOM");
-        // Trigger change handler to set initial state
-        corsSelect.onchange();
-      });
     </script>';
 } else {
   // if $error

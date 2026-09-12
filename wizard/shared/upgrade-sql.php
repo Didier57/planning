@@ -589,17 +589,14 @@ SQL
     'postgresql-sql' => <<<'SQL'
 ALTER TABLE webcal_nonuser_cals ALTER COLUMN cal_url TYPE VARCHAR(255);
 ALTER TABLE webcal_entry ALTER COLUMN cal_url TYPE VARCHAR(255);
-ALTER TABLE webcal_user ADD cal_api_token VARCHAR(255) DEFAULT NULL;
 SQL,
     'default-sql' => <<<'SQL'
 ALTER TABLE webcal_nonuser_cals MODIFY COLUMN cal_url VARCHAR(255);
 ALTER TABLE webcal_entry MODIFY COLUMN cal_url VARCHAR(255);
-ALTER TABLE webcal_user ADD cal_api_token VARCHAR(255) DEFAULT NULL;
 SQL
     ,
     'sqlite3-sql' => <<<'SQL'
 -- SQLite does not support ALTER TABLE MODIFY COLUMN, but column types are dynamic
-ALTER TABLE webcal_user ADD COLUMN cal_api_token VARCHAR(255) DEFAULT NULL;
 SQL
   ],
   [

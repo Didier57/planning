@@ -11,7 +11,6 @@ CREATE TABLE webcal_user (
   cal_title VARCHAR(75) DEFAULT NULL,
   cal_birthday INT DEFAULT NULL,
   cal_last_login INT DEFAULT NULL,
-  cal_api_token VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY ( cal_login )
 );
 -- NOTE: No default admin user is created here. Earlier versions shipped a

@@ -107,5 +107,3 @@ System Settings.
 
 For automated data access, see:
 
-- [MCP Server](mcp-server.md) — AI assistant integration with
-  `list_events`, `search_events`, and `add_event` tools

@@ -370,7 +370,6 @@
 | cal_title | VARCHAR | 75 | Y |   | user's title |
 | cal_birthday | INT |   | Y |   | user's birthday |
 | cal_last_login | INT |   | Y |   | user's last log in date |
-| cal_api_token | VARCHAR | 255 | Y |   | user's API token for MCP server |
 
 
 ### webcal_user_layers
