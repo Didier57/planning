@@ -241,16 +241,28 @@ function wcb_create_columns ( $stmt ) {
   return [ $tm[1], $cols ];
 }
 
-/** Ordered live columns of a table via SHOW COLUMNS, or null. */
+/** Ordered live columns of a table via SHOW COLUMNS, or null.
+ * Each entry: colname => [ 'nullable' => bool, 'default' => string|null ]. */
 function wcb_live_columns ( $table ) {
   $res = dbi_execute ( 'SHOW COLUMNS FROM `' . $table . '`', [], false, false );
   $cols = [];
   if ( $res ) {
     while ( $row = dbi_fetch_row ( $res ) )
-      $cols[] = $row[0];
+      $cols[$row[0]] = [ 'nullable' =>
+          ( strtoupper ( (string) $row[2] ) == 'YES' ),
+        'default' => ( $row[4] === null ? null : (string) $row[4] ) ];
     dbi_free_result ( $res );
   }
   return ( count ( $cols ) > 0 ) ? $cols : null;
+}
+
+/** Render a column default value as a SQL literal ('' when none). */
+function wcb_default_literal ( $d ) {
+  if ( $d === null || strtoupper ( (string) $d ) == 'NULL' )
+    return "''";
+  if ( is_numeric ( $d ) && ! preg_match ( '/[^0-9.eE+\-]/', $d ) )
+    return $d;
+  return "'" . str_replace ( [ '\\', "'" ], [ '\\\\', '\\\'' ], $d ) . "'";
 }
 
 $doImport = ( getPostValue ( 'import' ) == '1' );
@@ -344,7 +356,7 @@ if ( $doImport ) {
         $dumpPos = array_flip ( $oldCols );
         $missing = [];
         foreach ( $oldCols as $c ) {
-          if ( ! in_array ( $c, $newCols ) )
+          if ( ! isset ( $newCols[$c] ) )
             $missing[] = $c;
         }
         if ( count ( $missing ) > 0 )
@@ -354,8 +366,14 @@ if ( $doImport ) {
         if ( $skip == '' ) {
           dbi_execute ( 'DELETE FROM `' . $table . '`', [], false, false );
 
+          $insertCols = [];
+          foreach ( $oldCols as $c ) {
+            if ( isset ( $newCols[$c] ) )
+              $insertCols[] = $c;
+          }
           $colList = implode ( ', ',
-            array_map ( function ( $c ) { return '`' . $c . '`'; }, $newCols ) );
+            array_map ( function ( $c ) { return '`' . $c . '`'; },
+              $insertCols ) );
           $rowsets = [];
           $n = 0;
           foreach ( ( $rows[$table] ?? [] ) as $vals ) {
@@ -366,9 +384,11 @@ if ( $doImport ) {
               continue;
             }
             $outVals = [];
-            foreach ( $newCols as $c ) {
-              $oidx = isset ( $dumpPos[$c] ) ? $dumpPos[$c] : null;
-              $outVals[] = ( $oidx !== null ) ? $vals[$oidx] : 'null';
+            foreach ( $insertCols as $c ) {
+              $v = $vals[$dumpPos[$c]];
+              if ( ! $newCols[$c]['nullable'] && strcasecmp ( $v, 'null' ) == 0 )
+                $v = wcb_default_literal ( $newCols[$c]['default'] );
+              $outVals[] = $v;
             }
             $rowsets[] = '(' . implode ( ', ', $outVals ) . ')';
             $n++;
