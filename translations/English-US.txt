@@ -298,6 +298,24 @@ Export: Export
 About the WebCalendar plugin for WordPress: About the WebCalendar plugin for WordPress
 
 ########################################
+# Page: import_sql.php
+#
+Import SQL: Import SQL
+No valid file was uploaded.: No valid file was uploaded.
+The wipe confirmation checkbox must be ticked.: The wipe confirmation checkbox must be ticked.
+The uploaded file could not be read.: The uploaded file could not be read.
+Table does not exist in the target database.: Table does not exist in the target database.
+Could not determine the dump column order.: Could not determine the dump column order.
+Columns not present in the target table: : Columns not present in the target table:
+Table %s: a row has %d values instead of %d.: Table %s: a row has %d values instead of %d.
+Table %s: %s: Table %s: %s
+The "webcal_config" settings table is never touched.: The "webcal_config" settings table is never touched.
+Warning: existing calendar data will be wiped.: Warning: existing calendar data will be wiped.
+SQL file: SQL file
+I understand that existing records will be wiped.: I understand that existing records will be wiped.
+Upload a WebCalendar database dump (.sql) to replace the current data. All existing records in the tables present in the dump will be deleted first, then re-inserted from the file. The database schema itself is not modified.: Upload a WebCalendar database dump (.sql) to replace the current data. All existing records in the tables present in the dump will be deleted first, then re-inserted from the file. The database schema itself is not modified.
+
+########################################
 # Page: report.php
 #
 This event is confidential.: This event is confidential.

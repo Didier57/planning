@@ -96,6 +96,7 @@ import_handler.php
 import_outlookcsv.php
 import_palmdesktop.php
 import.php
+import_sql.php
 includes/access.php
 includes/ajax.php
 includes/assert.php

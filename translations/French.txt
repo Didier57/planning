@@ -518,6 +518,26 @@ Repeated items are imported separately. Prior imports are not overwritten.: Les 
 Upload file: Fichier à transférer
 
 ########################################
+# Page: import_sql.php
+#
+Import SQL: Importer SQL
+Table: Table
+Rows: Lignes
+No valid file was uploaded.: Aucun fichier valide n'a été transféré.
+The wipe confirmation checkbox must be ticked.: La case de confirmation d'effacement doit être cochée.
+The uploaded file could not be read.: Le fichier transféré n'a pas pu être lu.
+Table does not exist in the target database.: La table n'existe pas dans la base de données cible.
+Could not determine the dump column order.: Impossible de déterminer l'ordre des colonnes du dump.
+Columns not present in the target table: : Colonnes absentes de la table cible :
+Table %s: a row has %d values instead of %d.: Table %s : une ligne contient %d valeurs au lieu de %d.
+Table %s: %s: Table %s : %s
+The "webcal_config" settings table is never touched.: La table de paramètres "webcal_config" n'est jamais modifiée.
+Warning: existing calendar data will be wiped.: Attention : les données d'agenda existantes seront effacées.
+SQL file: Fichier SQL
+I understand that existing records will be wiped.: Je comprends que les enregistrements existants seront effacés.
+Upload a WebCalendar database dump (.sql) to replace the current data. All existing records in the tables present in the dump will be deleted first, then re-inserted from the file. The database schema itself is not modified.: Transférez une copie de la base de données WebCalendar (.sql) pour remplacer les données actuelles. Tous les enregistrements existants dans les tables présentes dans la copie seront d'abord supprimés, puis réinsérés depuis le fichier. Le schéma de la base de données n'est pas modifié.
+
+########################################
 # Page: login.php
 #
 Fatal Error: Erreur fatale
