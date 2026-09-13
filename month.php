@@ -76,64 +76,7 @@ if ( $DISPLAY_TASKS == 'Y' && $friendly != 1 ) {
   $tableWidth = '80%';
 }
 $eventinfo = ( ! empty ( $eventinfo ) ? $eventinfo : '' );
-$fc_locale = ( ( stristr ( $LANGUAGE, 'France' )
-    || stristr ( $LANGUAGE, 'French' ) ) ? 'fr'
-  : ( ( stristr ( $LANGUAGE, 'Dutch' )
-      || stristr ( $LANGUAGE, 'Nederland' ) ) ? 'nl' : 'en-gb' ) );
-$fc_viewed = ( strlen ( $user ) ? $user : $login );
-$fc_can_edit = ( access_user_calendar ( 'edit',
-    ( strlen ( $user ) ? $user : $login ), $login ) == 'Y' );
-$monthStr =
-  '<div id="fc-calendar"></div>' . "\n"
-  . '<script src="pub/fullcalendar/index.global.min.js"></script>' . "\n"
-  . '<script src="pub/fullcalendar/locales/'
-  . $fc_locale . '.global.min.js"></script>' . "\n"
-  . '<script>' . "\n"
-  . 'function fcFmt ( d, allDay ) {' . "\n"
-  . '  var p = function ( n ) { return ( n < 10 ? "0" : "" ) + n; };' . "\n"
-  . '  if ( allDay )' . "\n"
-  . '    return d.getFullYear () + p ( d.getMonth () + 1 ) + p ( d.getDate () );' . "\n"
-  . '  return d.getFullYear () + "-" + p ( d.getMonth () + 1 ) + "-" + p ( d.getDate () )' . "\n"
-  . '    + "T" + p ( d.getHours () ) + ":" + p ( d.getMinutes () )'
-  . ' + ":" + p ( d.getSeconds () );' . "\n"
-  . '}' . "\n"
-  . 'function fcMove ( info ) {' . "\n"
-  . '  var p = new URLSearchParams ();' . "\n"
-  . '  p.set ( "action", "move" );' . "\n"
-  . '  p.set ( "id", info.event.id );' . "\n"
-  . '  p.set ( "start", fcFmt ( info.event.start, info.event.allDay ) );' . "\n"
-  . '  p.set ( "end", fcFmt ( info.event.end, info.event.allDay ) );' . "\n"
-  . '  fetch ( "fullcalendar_events.php", { method: "POST", body: p } )' . "\n"
-  . '    .then ( function ( r ) { return r.json (); } )' . "\n"
-  . '    .then ( function ( j ) {' . "\n"
-  . '      if ( j && j.return_code === "success" ) return;' . "\n"
-  . '      location.reload ();' . "\n"
-  . '    } )' . "\n"
-  . '    .catch ( function () { location.reload (); } );' . "\n"
-  . '}' . "\n"
-  . 'var fcCalendar = new FullCalendar.Calendar (' . "\n"
-  . '  document.getElementById ( "fc-calendar" ), {' . "\n"
-  . '    initialView: "dayGridMonth",' . "\n"
-  . '    initialDate: "'
-  . date ( 'Y-m-d', mktime ( 0, 0, 0, $thismonth, 1, $thisyear ) ) . '",' . "\n"
-  . '    headerToolbar: false,' . "\n"
-  . '    locale: "' . $fc_locale . '",' . "\n"
-  . '    height: "auto",' . "\n"
-  . '    events: {' . "\n"
-  . '      url: "fullcalendar_events.php",' . "\n"
-  . '      extraParams: {' . "\n"
-  . '        user: "' . $fc_viewed . '",' . "\n"
-  . '        cat_id: "' . ( isset ( $cat_id ) ? $cat_id : '' ) . '",' . "\n"
-  . '        readonly: "' . ( $fc_can_edit ? 0 : 1 ) . '"' . "\n"
-  . '      }' . "\n"
-  . '    },' . "\n"
-  . '    editable: ' . ( $fc_can_edit ? 'true' : 'false' ) . ',' . "\n"
-  . '    eventDrop: fcMove,' . "\n"
-  . '    eventResize: fcMove' . "\n"
-  . '  }' . "\n"
-  . ');' . "\n"
-  . 'fcCalendar.render ();' . "\n"
-  . '</script>';
+$monthStr = display_month ( $thismonth, $thisyear, false, true );
 $navStr = display_navigation ( 'month' );
 
 if ( empty ( $friendly ) ) {
