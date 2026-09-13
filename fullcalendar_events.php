@@ -232,10 +232,4 @@ foreach ( $repeated_events as $E ) {
 
 $sendPlainText = ( getValue ( 'format' ) == 'text'
   || getValue ( 'format' ) == 'plain' );
-
-// FullCalendar v6 expects a bare JSON array of event objects at the feed
-// URL (not an envelope object like ajax_send_objects produces).
-header ( 'Content-Type: ' . ( $sendPlainText
-    ? 'text/plain; charset=utf-8'
-    : 'application/json; charset=utf-8' ) );
-echo json_encode ( $result );
+ajax_send_objects ( [ 'events' => $result ], $sendPlainText );

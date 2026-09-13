@@ -251,10 +251,6 @@ $fc_can_edit = ( access_user_calendar ( 'edit',
     ( strlen ( $user ) ? $user : $login ), $login ) == 'Y' );
 $fc_readonly = ( $fc_can_edit ? '0' : '1' );
 $fc_initdate = date ( 'Y-m-d', $wkstart );
-$fc_slotDuration = sprintf ( '%02d:%02d:00', floor ( $interval / 60 ),
-  $interval % 60 );
-$fc_slotMin = sprintf ( '%02d:00:00', $WORK_DAY_START_HOUR );
-$fc_slotMax = sprintf ( '%02d:00:00', $WORK_DAY_END_HOUR );
 $weekStr = '<div id="fc-calendar"></div>' . "\n"
   . '<script src="pub/fullcalendar/index.global.min.js"></script>' . "\n"
   . '<script src="pub/fullcalendar/locales/'
@@ -277,7 +273,7 @@ $weekStr = '<div id="fc-calendar"></div>' . "\n"
   . '  fetch ( "fullcalendar_events.php", { method: "POST", body: p } )' . "\n"
   . '    .then ( function ( r ) { return r.json (); } )' . "\n"
   . '    .then ( function ( j ) {' . "\n"
-  . '      if ( ! j || j.error !== 0 ) { location.reload (); }' . "\n"
+  . '      if ( ! j || j.return_code !== "success" ) { location.reload (); }' . "\n"
   . '    } )' . "\n"
   . '    .catch ( function () { location.reload (); } );' . "\n"
   . '}' . "\n"
@@ -286,9 +282,9 @@ $weekStr = '<div id="fc-calendar"></div>' . "\n"
   . '  initialView: "timeGridWeek",' . "\n"
   . '  initialDate: "' . $fc_initdate . '",' . "\n"
   . '  headerToolbar: false,' . "\n"
-  . '  slotDuration: "' . $fc_slotDuration . '",' . "\n"
-  . '  slotMinTime: "' . $fc_slotMin . '",' . "\n"
-  . '  slotMaxTime: "' . $fc_slotMax . '",' . "\n"
+  . '  slotDuration: "' . $interval . ' minutes",' . "\n"
+  . '  slotMinTime: "' . $WORK_DAY_START_HOUR . ':00:00",' . "\n"
+  . '  slotMaxTime: "' . $WORK_DAY_END_HOUR . ':00:00",' . "\n"
   . '  weekends: ' . ( $DISPLAY_WEEKENDS == 'N' ? 'false' : 'true' ) . ',' . "\n"
   . '  height: "auto",' . "\n"
   . '  timeZone: "local",' . "\n"

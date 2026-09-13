@@ -106,7 +106,7 @@ $monthStr =
   . '  fetch ( "fullcalendar_events.php", { method: "POST", body: p } )' . "\n"
   . '    .then ( function ( r ) { return r.json (); } )' . "\n"
   . '    .then ( function ( j ) {' . "\n"
-  . '      if ( j && j.error === 0 ) return;' . "\n"
+  . '      if ( j && j.return_code === "success" ) return;' . "\n"
   . '      location.reload ();' . "\n"
   . '    } )' . "\n"
   . '    .catch ( function () { location.reload (); } );' . "\n"
