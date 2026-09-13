@@ -242,6 +242,68 @@ if ( $DISPLAY_TASKS == 'Y' ) {
         </td>';
 }
 
+$fc_locale = ( ( stristr ( $LANGUAGE, 'French' )
+      || stristr ( $LANGUAGE, 'France' ) ) ? 'fr'
+  : ( ( stristr ( $LANGUAGE, 'Dutch' )
+      || stristr ( $LANGUAGE, 'Nederland' ) ) ? 'nl' : 'en-gb' ) );
+$fc_viewed = ( strlen ( $user ) ? $user : $login );
+$fc_can_edit = ( access_user_calendar ( 'edit',
+    ( strlen ( $user ) ? $user : $login ), $login ) == 'Y' );
+$fc_readonly = ( $fc_can_edit ? '0' : '1' );
+$fc_initdate = date ( 'Y-m-d', $wkstart );
+$weekStr = '<div id="fc-calendar"></div>' . "\n"
+  . '<script src="pub/fullcalendar/index.global.min.js"></script>' . "\n"
+  . '<script src="pub/fullcalendar/locales/'
+  . $fc_locale . '.global.min.js"></script>' . "\n"
+  . '<script>' . "\n"
+  . 'function fcFmt ( d, allDay ) {' . "\n"
+  . '  var p = function ( n ) { return ( n < 10 ? "0" : "" ) + n; };' . "\n"
+  . '  if ( allDay )' . "\n"
+  . '    return d.getFullYear () + p ( d.getMonth () + 1 ) + p ( d.getDate () );' . "\n"
+  . '  return d.getFullYear () + "-" + p ( d.getMonth () + 1 ) + "-" + p ( d.getDate () )' . "\n"
+  . '    + "T" + p ( d.getHours () ) + ":" + p ( d.getMinutes () )'
+  . ' + ":" + p ( d.getSeconds () );' . "\n"
+  . '}' . "\n"
+  . 'function fcMove ( info ) {' . "\n"
+  . '  var p = new URLSearchParams ();' . "\n"
+  . '  p.append ( "action", "move" );' . "\n"
+  . '  p.append ( "id", info.event.id );' . "\n"
+  . '  p.append ( "start", fcFmt ( info.event.start, info.event.allDay ) );' . "\n"
+  . '  p.append ( "end", ( info.event.end ? fcFmt ( info.event.end, info.event.allDay ) : "" ) );' . "\n"
+  . '  fetch ( "fullcalendar_events.php", { method: "POST", body: p } )' . "\n"
+  . '    .then ( function ( r ) { return r.json (); } )' . "\n"
+  . '    .then ( function ( j ) {' . "\n"
+  . '      if ( ! j || j.return_code !== "success" ) { location.reload (); }' . "\n"
+  . '    } )' . "\n"
+  . '    .catch ( function () { location.reload (); } );' . "\n"
+  . '}' . "\n"
+  . 'var fcCalendar = new FullCalendar.Calendar ('
+  . ' document.getElementById ( "fc-calendar" ), {' . "\n"
+  . '  initialView: "timeGridWeek",' . "\n"
+  . '  initialDate: "' . $fc_initdate . '",' . "\n"
+  . '  headerToolbar: false,' . "\n"
+  . '  slotDuration: "' . $interval . ' minutes",' . "\n"
+  . '  slotMinTime: "' . $WORK_DAY_START_HOUR . ':00:00",' . "\n"
+  . '  slotMaxTime: "' . $WORK_DAY_END_HOUR . ':00:00",' . "\n"
+  . '  weekends: ' . ( $DISPLAY_WEEKENDS == 'N' ? 'false' : 'true' ) . ',' . "\n"
+  . '  height: "auto",' . "\n"
+  . '  timeZone: "local",' . "\n"
+  . '  locale: "' . $fc_locale . '",' . "\n"
+  . '  editable: ' . ( $fc_can_edit ? 'true' : 'false' ) . ',' . "\n"
+  . '  events: {' . "\n"
+  . '    url: "fullcalendar_events.php",' . "\n"
+  . '    extraParams: {' . "\n"
+  . '      user: "' . $fc_viewed . '",' . "\n"
+  . '      cat_id: "' . ( isset ( $cat_id ) ? $cat_id : '' ) . '",' . "\n"
+  . '      readonly: "' . $fc_readonly . '"' . "\n"
+  . '    }' . "\n"
+  . '  },' . "\n"
+  . '  eventDrop: fcMove,' . "\n"
+  . '  eventResize: fcMove' . "\n"
+  . '} );' . "\n"
+  . 'fcCalendar.render ();' . "\n"
+  . '</script>';
+
 print_header (
   ['js/popups.js/true', 'js/dblclick_add.js/true'],
   generate_refresh_meta() );
@@ -256,11 +318,7 @@ echo <<<EOT
       </tr>
       <tr>
         <td>
-          <table class="main"{$help}>
-            <tr>
-              <th class="day_glance_time">&nbsp;</th>{$headerStr}
-            </tr>{$untimedStr}{$eventsStr}
-          </table>
+          {$weekStr}
         </td>{$minical_tasks}
       </tr>
     </table>
