@@ -111,3 +111,9 @@ html[data-theme="dark"] .dropdown .dropdown-toggle::after,
 html[data-theme="dark"] .btn-group:not(.dropleft):not(.dropright):not(.dropup) .dropdown-toggle::after {
   border-top-color: #e8eaed;
 }
+
+/* Printer icon in the menu (printer.svg uses fill="currentColor" = black and
+   is rendered without a filter, so it disappears on the dark navbar). */
+html[data-theme="dark"] a[target="cal_printer_friendly"] img {
+  filter: invert(1);
+}
