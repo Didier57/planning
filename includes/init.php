@@ -185,10 +185,15 @@ function print_header ( $includes = '', $HeadX = '', $BodyX = '',
   // non-empty, including this as a normal stylesheet so they can see how it
   // will look when printed. This maintains backwards-compatibility for browsers
   // that don't support media="print" stylesheets.
-  $cs_ar = ['css/styles.css', 'css/print_styles.css'];
+  $cs_ar = ['css/styles.css', 'css/dark_mode.css', 'css/print_styles.css'];
   $js_ar = [];
 
   $ret = send_doctype( $appStr );
+  $ret .= "\n<script type=\"text/javascript\">\n" .
+    "  try { if ( localStorage.getItem('webcalendar_theme') === 'dark' ) {\n" .
+    "    document.documentElement.setAttribute('data-theme', 'dark');\n" .
+    "  } } catch ( e ) {}\n" .
+    "</script>\n";
 // Use "punctuation.css" to start getting punctuation out of the code to where the translators can get at it.
   //  <link href="' . $incdir . '/css/punctuation.css" rel="stylesheet">';
 

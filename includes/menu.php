@@ -555,6 +555,14 @@ if (empty($thisday))
     <div class="navbar-collapse collapse order-3 dual-collapse2" id="navbarLogoutCollapse">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown-menu-right">
+          <a class="nav-link" href="#" onclick="toggleTheme(); return false;"
+            title="<?php echo etranslate('Toggle dark mode'); ?>"
+            aria-label="<?php echo etranslate('Toggle dark mode'); ?>">
+            <img id="theme-icon" class="button-icon"
+              src="images/bootstrap-icons/moon.svg" alt="">
+          </a>
+        </li>
+        <li class="nav-item dropdown-menu-right">
           <a class="nav-link" href="<?php echo $logout_url; ?>">Logout</a>
         </li>
       </ul>
@@ -563,6 +571,34 @@ if (empty($thisday))
 
   </div>
 </nav>
+
+<script type="text/javascript">
+  function applyThemeIcon() {
+    var el = document.getElementById('theme-icon');
+    if (!el) return;
+    try {
+      if (localStorage.getItem('webcalendar_theme') === 'dark') {
+        el.src = 'images/bootstrap-icons/sun.svg';
+      } else {
+        el.src = 'images/bootstrap-icons/moon.svg';
+      }
+    } catch (e) {}
+  }
+  function toggleTheme() {
+    try {
+      var dark = localStorage.getItem('webcalendar_theme') === 'dark';
+      if (dark) {
+        localStorage.setItem('webcalendar_theme', 'light');
+        document.documentElement.setAttribute('data-theme', 'light');
+      } else {
+        localStorage.setItem('webcalendar_theme', 'dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    } catch (e) {}
+    applyThemeIcon();
+  }
+  applyThemeIcon();
+</script>
 
 <?php
 
