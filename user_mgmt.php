@@ -233,6 +233,11 @@ print_header ( [], '', 'onload="load_users();"' );
         // Change Password
         ret += "<a class='clickable dropdown-item' onclick=\"return change_password('" + login +
             "');\"><?php etranslate('Change Password'); ?></a>";
+        // Resend password email
+        <?php if ($is_admin && access_can_access_function(ACCESS_USER_MANAGEMENT)) { ?>
+            ret += "<a class='clickable dropdown-item' onclick=\"return resend_password('" + login +
+                "');\"><?php etranslate('Resend password email'); ?></a>";
+        <?php } ?>
         // Delete User
         <?php if ($is_admin && $admin_can_delete_user && access_can_access_function(ACCESS_USER_MANAGEMENT)) { ?>
             // Cannot delete yourself
@@ -418,11 +423,8 @@ print_header ( [], '', 'onload="load_users();"' );
                 $('#edit-user-dialog-alert').show();
                 return;
             }
-            if (password1.length == 0) {
-                $('#errorMessage').html('<?php echo $noPasswordError; ?>');
-                $('#edit-user-dialog-alert').show();
-                return;
-            }
+            // The password is optional: when left blank a random password is
+            // generated automatically and emailed to the user.
             if (password1 != password2) {
                 $('#errorMessage').html('<?php echo $passwordsMismatchError; ?>');
                 $('#edit-user-dialog-alert').show();
@@ -566,6 +568,51 @@ print_header ( [], '', 'onload="load_users();"' );
                 alert('<?php etranslate('Error'); ?>:' + ex);
             });
     }
+
+    <?php if ($is_admin && access_can_access_function(ACCESS_USER_MANAGEMENT)) { ?>
+
+        function resend_password(user) {
+            console.log('resend_password(' + user + ')');
+            if (!confirm('<?php etranslate('Reset the password for this user and email the new password?'); ?>')) {
+                return;
+            }
+            var error = '';
+            $.post('users_ajax.php', {
+                        action: "reset-password",
+                        login: user,
+                        csrf_form_key: '<?php echo getFormKey(); ?>'
+                    },
+                    function(data, status) {
+                        console.log('Data: ' + data);
+                        var stringified = JSON.stringify(data);
+                        console.log("resend_password Data: " + stringified + "\nStatus: " + status);
+                        try {
+                            var response = jQuery.parseJSON(stringified);
+                            console.log('resend_password response=' + response);
+                        } catch (err) {
+                            console.log('Error: ' + err);
+                            error = '<?php etranslate('JSON error'); ?>' + ' - ' + err;
+                            return;
+                        }
+                        if (response.error) {
+                            console.log('Error: ' + response.message);
+                            error = '<?php etranslate('Error'); ?>' + ' - ' + response.message;
+                            return;
+                        }
+                    })
+                .done(function() {
+                    if (error.length == 0) {
+                        $('#infoMessage').html('<?php etranslate('Password reset and emailed.') ?>');
+                        $('#main-dialog-alert').show();
+                    } else {
+                        alert('<?php etranslate('Error'); ?>: ' + error);
+                    }
+                })
+                .fail(function(jqxhr, settings, ex) {
+                    alert('<?php etranslate('Error'); ?>:' + ex);
+                });
+        }
+    <?php } ?>
 
     <?php if ($is_admin && $admin_can_delete_user && access_can_access_function(ACCESS_USER_MANAGEMENT)) { ?>
 

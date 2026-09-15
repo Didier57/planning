@@ -359,6 +359,60 @@ function user_update_user_password ( $user, $password ) {
 }
 
 /**
+ * Generate a random password using a cryptographically secure source.
+ *
+ * The character set avoids ambiguous characters (0/O, 1/l/I, etc.) so the
+ * password is easy to read and type when relayed in an email.
+ *
+ * @param int $len Desired length (default 12)
+ *
+ * @return string The generated password
+ */
+function user_generate_password ( $len = 12 ) {
+  $chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  $max = strlen ( $chars ) - 1;
+  $password = '';
+  $bytes = random_bytes ( $len * 2 );
+  for ( $i = 0; $i < $len; $i++ ) {
+    // Reject biased bytes so every character is equally likely.
+    do {
+      $r = ord ( $bytes[$i] );
+    } while ( $r > 255 - ( 255 % ( $max + 1 ) ) );
+    $password .= $chars[$r % ( $max + 1 )];
+  }
+  return $password;
+}
+
+/**
+ * Force (or clear) the requirement that a user change their password.
+ *
+ * Stored as a user preference (cal_setting = 'FORCE_PASSWORD_CHANGE').
+ *
+ * @param string $user User login
+ * @param bool   $on   True to force a change, false to clear the flag
+ */
+function user_force_password_change ( $user, $on = true ) {
+  dbi_execute ( 'DELETE FROM webcal_user_pref
+    WHERE cal_login = ? AND cal_setting = ?',
+    [$user, 'FORCE_PASSWORD_CHANGE'] );
+  if ( $on )
+    dbi_execute ( 'INSERT INTO webcal_user_pref
+      ( cal_login, cal_setting, cal_value ) VALUES ( ?, ?, ? )',
+      [$user, 'FORCE_PASSWORD_CHANGE', 'Y'] );
+}
+
+/**
+ * Whether the user is required to change their password.
+ *
+ * @param string $user User login
+ *
+ * @return bool True if a password change is required
+ */
+function user_must_change_password ( $user ) {
+  return ( get_pref_setting ( $user, 'FORCE_PASSWORD_CHANGE', '' ) == 'Y' );
+}
+
+/**
  * Delete a user from the system.
  *
  * This will also delete any of the user's events in the system that have

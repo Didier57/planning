@@ -177,6 +177,12 @@ if ($single_user == 'Y' || $use_http_auth) {
         $url = $GLOBALS['newUserUrl'];
       }
 
+      // If this is the user's first login (or their password was reset),
+      // require them to change their password before using the app.
+      if (user_must_change_password($login)) {
+        $url = 'change_password.php';
+      }
+
       do_redirect($url);
     } else {
       // Invalid login. Always record the failure FIRST (for audit and for the
@@ -282,6 +288,9 @@ if ( ! empty ( $CUSTOM_HEADER ) && $CUSTOM_HEADER == 'Y' ) {
         }
       }
       echo "</div>\n";
+      // Forgot password
+      echo '<div id="forgot-link" class="form-group"><a href="forgot_password.php">'
+       . translate ( 'Forgot your password?' ) . '</a></div>';
       // Self registration
       if ( ! empty ( $ALLOW_SELF_REGISTRATION ) && $ALLOW_SELF_REGISTRATION == 'Y' ) {
         // We can limit what domain is allowed to self register.

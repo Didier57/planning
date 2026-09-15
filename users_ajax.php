@@ -147,6 +147,84 @@ if ($action == 'userlist') {
     ajax_send_success();
   else
     ajax_send_error($error);
+} else if ($action == 'reset-password') {
+  // A user administrator resets an account password to a new random value
+  // and emails it to the user (used for "forgot password" recovery).
+  $user = getPostValue('login');
+
+  if (!users_ajax_can_manage_users()) {
+    $error = $notAuthStr;
+  } else if (empty($user) || $user == '__public__') {
+    $error = translate('Unsupported action') . ': ' . $blankUserStr;
+  }
+
+  if (empty($error)) {
+    // Look up the target user's email address.
+    $email = '';
+    foreach (user_get_users() as $u) {
+      if ($u['cal_login'] == $user) {
+        $email = $u['cal_email'];
+        break;
+      }
+    }
+
+    if (empty($email)) {
+      $error = translate('No email address is set for this user.');
+    } else {
+      $password = user_generate_password();
+      if (user_update_user_password($user, $password)) {
+        user_force_password_change($user, true);
+        activity_log(
+          0,
+          $login,
+          $user,
+          LOG_USER_UPDATE,
+          translate('Reset Password')
+        );
+
+        // Email the user their new password and root URL.
+        require_once 'includes/classes/WebCalMailer.php';
+        $mail = new WebCalMailer;
+        $appStr = generate_application_name();
+        $htmlmail = (empty($EMAIL_HTML) || $EMAIL_HTML != 'Y' ? 'N' : 'Y');
+        $msg = str_replace(
+          'XXX',
+          $appStr,
+          translate('Your password for XXX has been reset.')
+        )
+          . "\n\n"
+          . str_replace('XXX', $user, translate('Your username is XXX.'))
+          . "\n\n"
+          . str_replace('XXX', $password, translate('Your new password is XXX.'))
+          . "\n\n"
+          . str_replace(
+            'XXX',
+            $appStr,
+            translate('Please visit XXX to log in and change your password.')
+          )
+          . "\n\n" . getServerUrl() . 'login.php'
+          . "\n\n"
+          . translate('You must change your password after logging in.')
+          . "\n\n" . translate('If you received this email in error') . "\n\n";
+        $name = $appStr . ' ' . translate('Password Reset');
+        $mail->WC_Send(
+          translate('Administrator', true),
+          $email,
+          $user,
+          $name,
+          $msg,
+          $htmlmail,
+          $EMAIL_FALLBACK_FROM
+        );
+      } else {
+        $error = translate('Database error');
+      }
+    }
+  }
+  if ($error == '')
+    ajax_send_success();
+  else
+    ajax_send_error($error);
 } else if ($action == 'delete') {
   $user = getPostValue('login');
   // Only a user administrator can delete users.
@@ -446,6 +524,12 @@ function save_user($add, $user, $lastname, $firstname, $is_admin, $enabled, $ema
   }
 
   if (empty($error) && $add) {
+    // If no password was supplied, generate a secure one automatically and
+    // force the user to change it on first login.
+    if (empty($password)) {
+      $password = user_generate_password();
+      user_force_password_change($user, true);
+    }
     // Add user
     user_add_user(
       $user,
@@ -457,7 +541,7 @@ function save_user($add, $user, $lastname, $firstname, $is_admin, $enabled, $ema
       $enabled
     );
     // Email the new user their login info, password and root URL.
-    if (!empty($email) && !empty($password) && $SEND_EMAIL != 'N') {
+    if (!empty($email) && $SEND_EMAIL != 'N') {
       require_once 'includes/classes/WebCalMailer.php';
       $mail = new WebCalMailer;
       $appStr = generate_application_name();
