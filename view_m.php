@@ -143,10 +143,16 @@ for ( $j = 0; $j < $viewusercnt; $j += $USERS_PER_TABLE ) {
       ? 'today"'
       : ( $is_weekend ? 'weekend"' : 'weekday"' ) );
 
+    $wk = (int) date ( 'W', $d );
+    $wknumStr = ( $DISPLAY_WEEKNUMBER == 'Y'
+      && ( ! isset ( $lastWk ) || $lastWk != $wk )
+      ? '<br><span style="font-size:.75rem;">(' . $wk . ')</span>' : '' );
+    $lastWk = $wk;
+
     // Non-breaking space below keeps event from wrapping prematurely.
     echo '
       <tr>
-        <th ' . $class . '>' . $weekday . '&nbsp;' . date ( 'd', $d ) . '</th>';
+        <th ' . $class . '>' . $weekday . '&nbsp;' . date ( 'd', $d ) . $wknumStr . '</th>';
     for ( $i = $j, $k = 0;
       $i < $viewusercnt && $k < $USERS_PER_TABLE; $i++, $k++ ) {
       $events = $e_save[$i];

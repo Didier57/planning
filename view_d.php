@@ -60,6 +60,8 @@ $nextStr = translate ( 'Next' );
 $previousStr = translate ( 'Previous' );
 
 $formKey = csrf_form_key();
+$weekNumStr = ( $DISPLAY_WEEKNUMBER == 'Y'
+  ? ' (' . translate ( 'Week' ) . ' ' . date ( 'W', $now ) . ')' : '' );
 echo <<<EOT
     <div class="viewnav">
       <a class="prev"
@@ -71,7 +73,7 @@ echo <<<EOT
         <img src="images/bootstrap-icons/arrow-right-circle.svg" class="next"
           alt="{$nextStr}"></a>
       <div class="title">
-        <span class="date">{$nowStr}</span><br>
+        <span class="date">{$nowStr}{$weekNumStr}</span><br>
         <span class="viewname">{$view_name}</span>
       </div>
     </div>

@@ -99,7 +99,10 @@ for ( $j = 0; $j < 7; $j += $DAYS_PER_TABLE ) {
       translate ( 'Double-click on empty cell to add new entry' ) . '"';
   echo '>
       <tr>
-        <th class="empty">&nbsp;</th>';
+        <th class="empty">' . ( $DISPLAY_WEEKNUMBER == 'Y'
+    ? '<span style="color:var(--h2color);font-size:.75rem;">'
+      . translate ( 'Week' ) . ' ' . date ( 'W', $wkstart + 86400 ) . '</span>'
+    : '&nbsp;' ) . '</th>';
 
   $body = $header = '';
   $todayYmd = date ( 'Ymd', $today );

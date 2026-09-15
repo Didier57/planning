@@ -100,7 +100,7 @@ for ( $r = 1; $r <= $yr_rows; $r++ ) {
 
   for( $c = 1; $c <= $yr_cols; $c++, $m++ ) {
     $gridOmonths .= '
-          <td>' . display_small_month ( $m, $year, false ) . '</td>';
+          <td>' . display_small_month ( $m, $year, false, true ) . '</td>';
   }
   $gridOmonths .= '
         </tr>';

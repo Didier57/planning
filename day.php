@@ -56,7 +56,7 @@ $smallTasks = ( $DISPLAY_TASKS == 'Y' ? '<div id="minitask">
 $dayStr = print_day_at_a_glance ( $nowYmd, ( empty ( $user )
     ? $login : $user ), $can_add );
 $navStr = display_navigation ( 'day' );
-$smallMonthStr = display_small_month ( $thismonth, $thisyear, true );
+$smallMonthStr = display_small_month ( $thismonth, $thisyear, true, true );
 if ( empty ( $friendly ) ) {
   $unapprovedStr = display_unapproved_events (
     $is_assistant || $is_nonuser_admin ? $user : $login );

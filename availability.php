@@ -64,6 +64,9 @@ $users = explode ( ',', $users );
 $nextStr = translate ( 'Next' );
 $prevStr = translate ( 'Previous' );
 
+$weekNumStr = ( $DISPLAY_WEEKNUMBER == 'Y'
+  ? ' (' . translate ( 'Week' ) . ' ' . date ( 'W', $time ) . ')' : '' );
+
 echo '
     <div style="width:99%;">
       <a class="prev" href="' . $prev_url
@@ -76,7 +79,7 @@ echo '
         <span class="date">';
 printf ( "%s, %s %d, %d", weekday_name ( strftime ( "%w", $time ) ),
   month_name ( $month - 1 ), $day, $year );
-echo '</span><br>
+echo $weekNumStr . '</span><br>
       </div>
     </div><br>
     <form action="availability.php" method="post">

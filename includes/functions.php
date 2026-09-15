@@ -1204,7 +1204,9 @@ function display_navigation ( $name, $show_arrows = true, $show_cats = true ) {
           <span class="date">';
 
   if ( $name == 'day' )
-    $ret .= date_to_str ( $nowYmd );
+    $ret .= date_to_str ( $nowYmd )
+     . ( $DISPLAY_WEEKNUMBER == 'Y' ? " \n(" . translate ( 'Week' ) . ' '
+       . date ( 'W', mktime ( 0, 0, 0, $thismonth, $thisday, $thisyear ) ) . ')' : '' );
   elseif ( $name == 'week' )
     $ret .= date_to_str ( date ( 'Ymd', $wkstart ), '', false )
      . '&nbsp;&nbsp;&nbsp; - &nbsp;&nbsp;&nbsp;'

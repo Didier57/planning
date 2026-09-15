@@ -236,7 +236,7 @@ if ( $DISPLAY_TASKS == 'Y' ) {
 <!-- START MINICAL -->
           <div class="minicontainer">' . ( $DISPLAY_SM_MONTH == 'Y' ? '
             <div class="minicalcontainer">'
-     . display_small_month ( $thismonth, $thisyear, true ) . '</div>' : '' ) . '
+     . display_small_month ( $thismonth, $thisyear, true, true ) . '</div>' : '' ) . '
             <div id="minitask">' . display_small_tasks ( $cat_id ) . '</div>
           </div>
         </td>';

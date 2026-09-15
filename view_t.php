@@ -294,6 +294,9 @@ if ( ! empty ( $error ) ) {
 $nextStr = translate ( 'Next' );
 $prevStr = translate ( 'Previous' );
 
+$weekNumStr = ( $view_type == 'S' && $DISPLAY_WEEKNUMBER == 'Y'
+  ? ' (' . translate ( 'Week' ) . ' ' . date ( 'W', $wkstart + 86400 ) . ')' : '' );
+
 echo '
     <div style="width:99%;">
       <a class="prev" href="view_t.php?id=' . $id .
@@ -305,7 +308,7 @@ echo '
       <div class="title">
         <span class="date">' . date_to_str ( date ( 'Ymd', $wkstart ), '', false )
  . '&nbsp;&nbsp;&nbsp; - &nbsp;&nbsp;&nbsp;'
- . date_to_str ( date ( 'Ymd', $wkend ), '', false ) . '</span><br>
+ . date_to_str ( date ( 'Ymd', $wkend ), '', false ) . $weekNumStr . '</span><br>
         <span class="viewname">' . $view_name . '</span>
       </div>
     </div><br><br>';
