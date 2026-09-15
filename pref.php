@@ -155,7 +155,7 @@ $colors = [
   'POPUP_BG' => translate('Event popup background'),
   'POPUP_FG' => translate('Event popup text')
 ];
-$color_sets = '';
+$color_sets = '<table class="color-table">';
 $dark_defaults = [
   'BGCOLOR' => '#1b1b1f',
   'H2COLOR' => '#e8eaed',
@@ -181,14 +181,15 @@ foreach ($colors as $k => $v) {
   if ( empty ( $prefarray[$dk] ) ) {
     $prefarray[$dk] = $dark_defaults[$k];
   }
-  $color_sets .= '<div class="form-inline mb-1">'
-    . '<label class="mr-2" style="min-width: 20em;">' . $v . '</label>'
-    . '<span class="mr-1">' . $lightStr . '</span>'
-    . print_color_input_html ( $k, '', '', '', 'span', '', $handler )
-    . '<span class="ml-3 mr-1">' . $darkStr . '</span>'
-    . print_color_input_html ( $dk, '', '', '', 'span', '', '' )
-    . '</div>';
+  $color_sets .= '<tr>'
+    . '<td class="pr-3 text-right" style="white-space: nowrap;">' . $v . '</td>'
+    . '<td class="pr-1 text-right" style="white-space: nowrap;">' . $lightStr . '</td>'
+    . '<td class="pr-4">' . print_color_input_html ( $k, '', '', '', 'span', '', $handler ) . '</td>'
+    . '<td class="pr-1 text-right" style="white-space: nowrap;">' . $darkStr . '</td>'
+    . '<td>' . print_color_input_html ( $dk, '', '', '', 'span', '', '' ) . '</td>'
+    . '</tr>';
 }
+$color_sets .= '</table>';
 
 //determine if we can set timezones, if not don't display any options
 $can_set_timezone = set_env ( 'TZ', $prefarray['TIMEZONE'] );

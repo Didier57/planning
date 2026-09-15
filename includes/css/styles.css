@@ -1436,3 +1436,7 @@ table.ThemeMenubar {
     scroll-padding-top: 2rem;
   }
 }
+
+
+.color-table td { padding: 3px 4px; vertical-align: middle; }
+.color-table input[type="color"] { padding: 1px; height: 2em; width: 4em; }

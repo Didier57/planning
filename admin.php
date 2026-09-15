@@ -119,7 +119,8 @@ if ( ! $error ) {
   $option = '
                 <option value="';
 
-  $cch = $color_sets = $datestyle_md = $datestyle_my = $datestyle_tk = '';
+  $cch = $datestyle_md = $datestyle_my = $datestyle_tk = '';
+  $color_sets = '<table class="color-table">';
   $datestyle_ymd = $lang_list = $prefer_vu = $rc = '';
   $start_wk_on = $start_wkend_on = $tabs = $user_vu = '';
   $work_hr_end = $work_hr_start = '';
@@ -250,17 +251,18 @@ if ( ! $error ) {
     if ( empty ( $s[$dk] ) ) {
       $s[$dk] = $dark_defaults[$k];
     }
-    // One row per color: light picker and dark picker side by side.
-    $color_sets .= '<div class="form-inline mb-1">'
-      . '<label class="mr-2" style="min-width: 20em;">' . $v . '</label>'
-      . '<span class="mr-1">' . $lightStr . '</span>'
-      . print_color_input_html ( $k, '', '', '', 'span', '', 'color_change_handler_' . $k )
-      . '<span class="ml-3 mr-1">' . $darkStr . '</span>'
-      . print_color_input_html ( $dk, '', '', '', 'span', '', '' )
-      . '</div>';
+    // One row per color: label, light picker, dark picker (aligned columns).
+    $color_sets .= '<tr>'
+      . '<td class="pr-3 text-right" style="white-space: nowrap;">' . $v . '</td>'
+      . '<td class="pr-1 text-right" style="white-space: nowrap;">' . $lightStr . '</td>'
+      . '<td class="pr-4">' . print_color_input_html ( $k, '', '', '', 'span', '', 'color_change_handler_' . $k ) . '</td>'
+      . '<td class="pr-1 text-right" style="white-space: nowrap;">' . $darkStr . '</td>'
+      . '<td>' . print_color_input_html ( $dk, '', '', '', 'span', '', '' ) . '</td>'
+      . '</tr>';
     $rc .= "\n        $('#admin_" . $k . "').val('" . $GLOBALS[$k] . "');\n        $('body').get(0).style.setProperty('--" . $vn . "', '" . $GLOBALS[$k] . "');\n";
     $rc .= "\n        $('#admin_" . $k . "_DARK').val('" . $dark_defaults[$k] . "');\n";
   }
+  $color_sets .= '</table>';
 
   $csp = ( $s['CSP'] ?: 'none' );
 
