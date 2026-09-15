@@ -558,7 +558,7 @@ if (empty($thisday))
           <a class="nav-link" href="#" onclick="toggleTheme(); return false;"
             title="<?php echo etranslate('Toggle dark mode'); ?>"
             aria-label="<?php echo etranslate('Toggle dark mode'); ?>">
-            <img id="theme-icon" class="button-icon"
+            <img id="theme-icon" class="button-icon-inverse"
               src="images/bootstrap-icons/moon.svg" alt="">
           </a>
         </li>
