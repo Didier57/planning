@@ -50,7 +50,7 @@ class WebCalendar {
    * (e.g. login.php and ws/login.php).
    */
   var $_filePhaseMap = [
-    '/^(about|nulogin|login|login-app|register|controlpanel|upcoming)\.php$/' =>
+    '/^(about|nulogin|login|login-app|register|forgot_password|controlpanel|upcoming)\.php$/' =>
     [
       ['Config', 'PHPDBI', 'Functions'],
       ['User', 'Connect']],

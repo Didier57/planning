@@ -372,13 +372,10 @@ function user_generate_password ( $len = 12 ) {
   $chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
   $max = strlen ( $chars ) - 1;
   $password = '';
-  $bytes = random_bytes ( $len * 2 );
   for ( $i = 0; $i < $len; $i++ ) {
-    // Reject biased bytes so every character is equally likely.
-    do {
-      $r = ord ( $bytes[$i] );
-    } while ( $r > 255 - ( 255 % ( $max + 1 ) ) );
-    $password .= $chars[$r % ( $max + 1 )];
+    // random_int() is CSPRNG and, unlike manual byte rejection, is
+    // guaranteed to terminate and be free of modulo bias.
+    $password .= $chars[random_int ( 0, $max )];
   }
   return $password;
 }
