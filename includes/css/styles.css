@@ -893,6 +893,12 @@ th.day_glance_time {
   text-decoration:none;
   vertical-align:middle;
 }
+#month .main th.empty,
+#month .main td.weekcell {
+  width:2.5rem;
+  overflow:hidden;
+  white-space:nowrap;
+}
 #pref .main td.empty,
 #pref .main th.empty {
   width:1%;

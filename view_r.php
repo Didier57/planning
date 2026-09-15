@@ -269,7 +269,14 @@ if ( ! $fit_to_window ) { ?>
 <?php } ?>
 
 <!-- table header -->
-<tr><th class="empty" style="inline-size:<?php echo $time_w;?>;">&nbsp;</th>
+<tr><th class="empty" rowspan="2" style="inline-size:<?php echo $time_w;?>;"><?php
+  if ( $DISPLAY_WEEKNUMBER == 'Y' )
+    echo '<span style="color:var(--h2color);font-size:.75rem;">'
+      . translate ( 'Week' ) . ' ' . date ( 'W', $wkstart + 86400 )
+      . '</span>';
+  else
+    echo '&nbsp;';
+?></th>
 <?php
   // heading row that displays day of week and date
   if ( ! $fit_to_window )
@@ -292,7 +299,7 @@ if ( ! $fit_to_window ) { ?>
 ?>
 </tr>
 
-<tr><th class="empty" style="inline-size: <?php echo $time_w;?>;">&nbsp;</th>
+<tr>
 <?php
   for ( $i = $start_ind; $i <= $end_ind; $i++ ) {
     echo $uheader;
