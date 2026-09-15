@@ -410,6 +410,125 @@ function user_must_change_password ( $user ) {
 }
 
 /**
+ * Retrieve the current password hash for a user.
+ *
+ * @param string $user User login
+ *
+ * @return string The stored password hash ('' if none)
+ */
+function user_get_password_hash ( $user ) {
+  $res = dbi_execute ( 'SELECT cal_passwd FROM webcal_user
+    WHERE cal_login = ?', [$user] );
+  if ( $res ) {
+    $row = dbi_fetch_row ( $res );
+    dbi_free_result ( $res );
+    if ( $row && isset ( $row[0] ) && $row[0] != '' )
+      return $row[0];
+  }
+  return '';
+}
+
+/**
+ * Begin a password reset, remembering the old hash so the reset can be
+ * reverted if the user proves they still know the old password.
+ *
+ * The old hash is stored in webcal_user_pref (PASSWORD_RESET_OLD_HASH) and a
+ * pending flag (PASSWORD_RESET_PENDING) is set. The new password is then
+ * applied and a forced change is requested.
+ *
+ * @param string $user         User login
+ * @param string $new_password New password
+ *
+ * @return bool True on success
+ */
+function user_begin_password_reset ( $user, $new_password ) {
+  $old_hash = user_get_password_hash ( $user );
+  if ( $old_hash != '' ) {
+    dbi_execute ( 'DELETE FROM webcal_user_pref
+      WHERE cal_login = ? AND cal_setting = ?',
+      [$user, 'PASSWORD_RESET_OLD_HASH'] );
+    dbi_execute ( 'INSERT INTO webcal_user_pref
+      ( cal_login, cal_setting, cal_value ) VALUES ( ?, ?, ? )',
+      [$user, 'PASSWORD_RESET_OLD_HASH', $old_hash] );
+    dbi_execute ( 'DELETE FROM webcal_user_pref
+      WHERE cal_login = ? AND cal_setting = ?',
+      [$user, 'PASSWORD_RESET_PENDING'] );
+    dbi_execute ( 'INSERT INTO webcal_user_pref
+      ( cal_login, cal_setting, cal_value ) VALUES ( ?, ?, ? )',
+      [$user, 'PASSWORD_RESET_PENDING', 'Y'] );
+  }
+  if ( ! user_update_user_password ( $user, $new_password ) )
+    return false;
+  user_force_password_change ( $user, true );
+  return true;
+}
+
+/**
+ * Whether a password reset is pending for the user.
+ *
+ * @param string $user User login
+ *
+ * @return bool True if a reset is pending
+ */
+function user_password_reset_pending ( $user ) {
+  return ( get_pref_setting ( $user, 'PASSWORD_RESET_PENDING', '' ) == 'Y' );
+}
+
+/**
+ * Check whether the supplied password matches the user's previous (pre-reset)
+ * password hash, if one was remembered.
+ *
+ * @param string $user     User login
+ * @param string $password Password to check
+ *
+ * @return bool True if it matches the remembered old hash
+ */
+function user_old_password_matches ( $user, $password ) {
+  $hash = get_pref_setting ( $user, 'PASSWORD_RESET_OLD_HASH', '' );
+  if ( $hash == '' )
+    return false;
+  if ( strlen ( $hash ) == 32 && ctype_xdigit ( $hash ) )
+    return hash_equals ( md5 ( $password ), $hash );
+  return password_verify ( $password, $hash );
+}
+
+/**
+ * Cancel a pending password reset, restoring the old password hash and
+ * clearing the forced-change requirement.
+ *
+ * @param string $user User login
+ */
+function user_cancel_password_reset ( $user ) {
+  $old_hash = get_pref_setting ( $user, 'PASSWORD_RESET_OLD_HASH', '' );
+  if ( $old_hash != '' )
+    dbi_execute ( 'UPDATE webcal_user SET cal_passwd = ? WHERE cal_login = ?',
+      [$old_hash, $user] );
+  dbi_execute ( 'DELETE FROM webcal_user_pref
+    WHERE cal_login = ? AND cal_setting = ?',
+    [$user, 'PASSWORD_RESET_PENDING'] );
+  dbi_execute ( 'DELETE FROM webcal_user_pref
+    WHERE cal_login = ? AND cal_setting = ?',
+    [$user, 'PASSWORD_RESET_OLD_HASH'] );
+  user_force_password_change ( $user, false );
+}
+
+/**
+ * Confirm a pending password reset: clear the pending marker and the
+ * remembered old hash (the new password is kept, and the forced-change
+ * requirement remains in effect).
+ *
+ * @param string $user User login
+ */
+function user_confirm_password_reset ( $user ) {
+  dbi_execute ( 'DELETE FROM webcal_user_pref
+    WHERE cal_login = ? AND cal_setting = ?',
+    [$user, 'PASSWORD_RESET_PENDING'] );
+  dbi_execute ( 'DELETE FROM webcal_user_pref
+    WHERE cal_login = ? AND cal_setting = ?',
+    [$user, 'PASSWORD_RESET_OLD_HASH'] );
+}
+
+/**
  * Delete a user from the system.
  *
  * This will also delete any of the user's events in the system that have

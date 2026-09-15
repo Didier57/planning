@@ -145,7 +145,18 @@ if ($single_user == 'Y' || $use_http_auth) {
     } else if (login_recent_failure_count($logLogin, $loginFailWindow) >= $loginMaxFailures) {
       $error = translate('Too many failed login attempts. Please try again later.');
       echo "ERROR: $error"; exit;
-    } else if (user_valid_login($login, $password)) {
+    } else if (user_valid_login($login, $password)
+        || (user_password_reset_pending($login)
+            && user_old_password_matches($login, $password))) {
+      // If the user authenticated with their OLD (pre-reset) password, the
+      // reset was not requested by them: cancel it and restore the old
+      // password. Otherwise they logged in with the NEW password, so confirm
+      // the reset (drop the remembered old hash; the forced change remains).
+      if (!user_valid_login($login, $password))
+        user_cancel_password_reset($login);
+      else
+        user_confirm_password_reset($login);
+
       // Prevent session fixation: a fresh session id is issued on every
       // successful authentication so a pre-set/fixed id cannot be reused.
       if (session_status() === PHP_SESSION_ACTIVE)

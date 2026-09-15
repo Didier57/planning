@@ -172,8 +172,7 @@ if ($action == 'userlist') {
       $error = translate('No email address is set for this user.');
     } else {
       $password = user_generate_password();
-      if (user_update_user_password($user, $password)) {
-        user_force_password_change($user, true);
+      if (user_begin_password_reset($user, $password)) {
         activity_log(
           0,
           $login,
@@ -205,7 +204,8 @@ if ($action == 'userlist') {
           . "\n\n" . getServerUrl() . 'login.php'
           . "\n\n"
           . translate('You must change your password after logging in.')
-          . "\n\n" . translate('If you received this email in error') . "\n\n";
+          . "\n\n" . str_replace('WebCalendar', $appStr,
+              translate('If you received this email in error')) . "\n\n";
         $name = $appStr . ' ' . translate('Password Reset');
         $mail->WC_Send(
           translate('Administrator', true),
@@ -547,12 +547,10 @@ function save_user($add, $user, $lastname, $firstname, $is_admin, $enabled, $ema
       $appStr = generate_application_name();
       $htmlmail = (empty($EMAIL_HTML) || $EMAIL_HTML != 'Y' ? 'N' : 'Y');
       $tempName = trim($firstname . ' ' . $lastname);
-      $msg = str_replace(
-        ', XXX.',
-        (strlen($tempName) ? ', ' . $tempName . '.' : '.'),
-        translate('Hello, XXX.')
-      ) . "\n\n"
-        . translate('A new WebCalendar account has been set up for you.')
+      $msg = str_replace('XXX', $tempName, translate('Hello, XXX.'))
+        . "\n\n"
+        . str_replace('WebCalendar', $appStr,
+            translate('A new WebCalendar account has been set up for you.'))
         . "\n\n"
         . str_replace('XXX', $user, translate('Your username is XXX.'))
         . "\n\n"
@@ -566,7 +564,8 @@ function save_user($add, $user, $lastname, $firstname, $is_admin, $enabled, $ema
         . "\n\n" . getServerUrl()
         . "\n\n"
         . translate('You may change your password after logging in the first time.')
-        . "\n\n" . translate('If you received this email in error') . "\n\n";
+        . "\n\n" . str_replace('WebCalendar', $appStr,
+            translate('If you received this email in error')) . "\n\n";
       $name = $appStr . ' ' . translate('Welcome') . ': ' . $firstname;
       $mail->WC_Send(
         translate('Administrator', true),

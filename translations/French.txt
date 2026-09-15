@@ -1179,7 +1179,7 @@ Username already exists.: Cet utilisateur existe déjà.
 Email address already exists.: Cette adresse Email existe déjà.
 The passwords were not identical.: Les mots de passe saisis ne sont pas identiques
 New user via self-registration.: Nouvel utilisateur par auto-enregistrement.
-A new WebCalendar account has been set up for you.: Un nouveau compte webcalendar a été créé pour vous.
+A new WebCalendar account has been set up for you.: Un nouveau compte WebCalendar a été créé pour vous.
 Your username is XXX.: Votre nom d'utilisateur est "XXX".
 Your password is XXX.: Votre mot de passe est "XXX"
 Please visit XXX to log in and start using your account!: Merci de visiter "XXX"
@@ -1199,6 +1199,27 @@ Last Name: Nom
 E-mail address: Adresse de couriel 
 Password (again): Mot de passe (confirmation)
 Your account information will be emailed to you.: Les informations sur votre compte vont vous être envoyées par email.
+A password reset was requested for your XXX account.: Une réinitialisation de mot de passe a été demandée pour votre compte XXX.
+Your new password is XXX.: Votre nouveau mot de passe est "XXX"
+Please visit XXX to log in and change your password.: Merci de visiter "XXX" pour vous connecter et changer votre mot de passe.
+You must change your password after logging in.: Vous devez changer votre mot de passe après votre connexion.
+Password Reset: Réinitialisation du mot de passe
+Forgot your password?: Mot de passe oublié ?
+If an account matches the information you provided, an email with a new password has been sent.: Si un compte correspond aux informations fournies, un email avec un nouveau mot de passe a été envoyé.
+Username or email address: Nom d'utilisateur ou adresse email
+Reset my password: Réinitialiser mon mot de passe
+You must change your password: Vous devez changer votre mot de passe
+New password: Nouveau mot de passe
+Confirm password: Confirmer le mot de passe
+Change password: Changer le mot de passe
+Password changed: Mot de passe modifié
+Resend password email: Renvoyer l'email du mot de passe
+Reset the password for this user and email the new password?: Réinitialiser le mot de passe de cet utilisateur et envoyer le nouveau mot de passe par email ?
+Password reset and emailed.: Mot de passe réinitialisé et envoyé par email.
+No email address is set for this user.: Aucune adresse email n'est définie pour cet utilisateur.
+Reset Password: Réinitialiser le mot de passe
+Your password for XXX has been reset.: Votre mot de passe pour XXX a été réinitialisé.
+Please enter your username or email address.: Veuillez saisir votre nom d'utilisateur ou votre adresse email.
 
 ########################################
 # Page: about.php

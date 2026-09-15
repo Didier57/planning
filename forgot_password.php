@@ -64,17 +64,13 @@ if (!empty($_POST['login'])) {
     // the account exists, so an attacker cannot probe for valid usernames.
     if ($target != '' && !empty($target_email) && $SEND_EMAIL != 'N') {
       $new_pass = user_generate_password();
-      if (user_update_user_password($target, $new_pass)) {
-        user_force_password_change($target, true);
+      if (user_begin_password_reset($target, $new_pass)) {
 
         $mail = new WebCalMailer;
         $htmlmail = (empty($EMAIL_HTML) || $EMAIL_HTML != 'Y' ? 'N' : 'Y');
         $tempName = strlen($target_name) ? $target_name : $target;
-        $msg = str_replace(
-          ', XXX.',
-          ', ' . $tempName . '.',
-          translate('Hello, XXX.')
-        ) . "\n\n"
+        $msg = str_replace('XXX', $tempName, translate('Hello, XXX.'))
+          . "\n\n"
           . str_replace(
             'XXX',
             $appStr,
@@ -93,7 +89,8 @@ if (!empty($_POST['login'])) {
           . "\n\n" . getServerUrl() . 'login.php'
           . "\n\n"
           . translate('You must change your password after logging in.')
-          . "\n\n" . translate('If you received this email in error') . "\n\n";
+          . "\n\n" . str_replace('WebCalendar', $appStr,
+              translate('If you received this email in error')) . "\n\n";
 
         $name = $appStr . ' ' . translate('Password Reset');
         $mail->WC_Send(
