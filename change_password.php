@@ -61,6 +61,7 @@ print_header([], '', '');
 <?php } ?>
 
 <form id="change-password-form" class="form" action="change_password.php" method="post">
+  <?php echo csrf_form_key(); ?>
   <div class="form-group">
     <label for="password1" class="text-info"><?php etranslate('New password'); ?>:</label><br>
     <input type="password" name="password1" id="password1" class="form-control">
