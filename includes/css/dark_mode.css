@@ -91,3 +91,12 @@ html[data-theme="dark"] .list-group-item {
   background-color: #242428;
   border-color: #3a3a40;
 }
+
+/* Navigation arrows (arrow-left/right-circle.svg) use fill="currentColor",
+   which renders black in <img> context and disappears on dark backgrounds. */
+html[data-theme="dark"] .prev img,
+html[data-theme="dark"] .next img,
+html[data-theme="dark"] img.prev,
+html[data-theme="dark"] img.next {
+  filter: invert(1);
+}
