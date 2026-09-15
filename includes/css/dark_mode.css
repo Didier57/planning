@@ -100,3 +100,14 @@ html[data-theme="dark"] img.prev,
 html[data-theme="dark"] img.next {
   filter: invert(1);
 }
+
+/* Bootstrap v4 "dropleft" dropdown toggle buttons (user/group/remote/resource
+   management, view_entry) render a caret via ::before with border-right using
+   currentColor (dark), which disappears on dark backgrounds. */
+html[data-theme="dark"] .dropleft .dropdown-toggle::before {
+  border-right-color: #e8eaed;
+}
+html[data-theme="dark"] .dropdown .dropdown-toggle::after,
+html[data-theme="dark"] .btn-group:not(.dropleft):not(.dropright):not(.dropup) .dropdown-toggle::after {
+  border-top-color: #e8eaed;
+}
