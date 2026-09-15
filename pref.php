@@ -161,6 +161,19 @@ foreach ($colors as $k => $v) {
   $color_sets .= print_color_input_html ( $k, $v, '', '', 'p', '', $handler );
 }
 
+$darkSuffix = ' (' . translate ( 'Dark mode' ) . ')';
+$colors_dark = [];
+foreach ( $colors as $k => $v ) {
+  $colors_dark[$k . '_DARK'] = $v . $darkSuffix;
+}
+$color_sets_dark = '';
+foreach ( $colors_dark as $k => $v ) {
+  if ( ! isset ( $prefarray[$k] ) ) {
+    $prefarray[$k] = '';
+  }
+  $color_sets_dark .= print_color_input_html ( $k, $v, '', '', 'p', '', '' );
+}
+
 //determine if we can set timezones, if not don't display any options
 $can_set_timezone = set_env ( 'TZ', $prefarray['TIMEZONE'] );
 $dateYmd = date ( 'Ymd' );
@@ -849,6 +862,8 @@ if ( $CUSTOM_TRAILER == 'Y' ) { ?>
 <table>
 <tr class="ignore"><td class="aligntop" style="inline-size: 50%">
 <?php echo $color_sets;?>
+<p class="bold mt-2 mb-1"><?php echo translate('Dark mode colors'); ?></p>
+<?php echo $color_sets_dark;?>
 <div><a href="#" class="btn btn-secondary" onclick="reset_colors(); return false;"><?php etranslate('Reset Colors');?></a></div>
 
 
@@ -895,6 +910,9 @@ function reset_colors() {
     foreach ( $colors as $k => $v ) {
       echo "  $('body').get(0).style.setProperty('--" . str_replace( '_', '', strtolower( $k ) ) . "', '$GLOBALS[$k]');\n";
       echo "  $('#pref_" . $k . "').val('$GLOBALS[$k]');\n";
+    }
+    foreach ( $colors_dark as $k => $v ) {
+      echo "  $('#pref_" . $k . "').val('');\n";
     }
   ?>
 }

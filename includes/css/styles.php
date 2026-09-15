@@ -179,6 +179,35 @@ defined( '_ISVALID' ) or die( 'You cannot access this file directly!' );
   --weeknumber: <?php echo$GLOBALS['WEEKNUMBER']; ?>;
 }
 <?php
+// Dark mode palette (overrides the light variables above).
+// Values come from *_DARK settings; fall back to the defaults when unset.
+if ( ! function_exists ( '_dark_color' ) ) {
+  function _dark_color ( $name, $default ) {
+    $key = $name . '_DARK';
+    return empty ( $GLOBALS[$key] ) ? $default : $GLOBALS[$key];
+  }
+}
+?>
+html[data-theme="dark"] {
+  --box-default-color: #3a3a40;
+  --captions: #9aa0a6;
+  --bgcolor: <?php echo _dark_color ( 'BGCOLOR', '#1b1b1f' ); ?>;
+  --cellbg: <?php echo _dark_color ( 'CELLBG', '#242428' ); ?>;
+  --h2color: <?php echo _dark_color ( 'H2COLOR', '#e8eaed' ); ?>;
+  --haseventsbg: <?php echo _dark_color ( 'HASEVENTSBG', '#3c3c46' ); ?>;
+  --myevents: <?php echo _dark_color ( 'MYEVENTS', '#f28b82' ); ?>;
+  --othermonthbg: <?php echo _dark_color ( 'OTHERMONTHBG', '#1f1f23' ); ?>;
+  --popupfg: <?php echo _dark_color ( 'POPUP_FG', '#e8eaed' ); ?>;
+  --popupbg: <?php echo _dark_color ( 'POPUP_BG', '#2c2c32' ); ?>;
+  --tablebg: <?php echo _dark_color ( 'TABLEBG', '#3a3a40' ); ?>;
+  --textcolor: <?php echo _dark_color ( 'TEXTCOLOR', '#e8eaed' ); ?>;
+  --thbg: <?php echo _dark_color ( 'THBG', '#2f2f35' ); ?>;
+  --thfg: <?php echo _dark_color ( 'THFG', '#e8eaed' ); ?>;
+  --todaycellbg: <?php echo _dark_color ( 'TODAYCELLBG', '#3d4b5c' ); ?>;
+  --weekendbg: <?php echo _dark_color ( 'WEEKENDBG', '#1f1f23' ); ?>;
+  --weeknumber: <?php echo _dark_color ( 'WEEKNUMBER', '#9aa0a6' ); ?>;
+}
+<?php
 // TODO: I think these two, among others, may be too specific.
 // Do they really need "#month"?
 // And, instead of IDs "#nextmonth" and "#prevmonth", would classes ".next" and ".prev" work?

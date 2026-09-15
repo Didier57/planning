@@ -232,6 +232,20 @@ if ( ! $error ) {
     $rc .= "\n        $('#admin_" . $k . "').val('" . $GLOBALS[$k] . "');\n        $('body').get(0).style.setProperty('--" . $vn . "', '" . $GLOBALS[$k] . "');\n";
   }
 
+  $darkSuffix = ' (' . translate ( 'Dark mode' ) . ')';
+  $colors_dark = [];
+  foreach ( $colors as $k => $v ) {
+    $colors_dark[$k . '_DARK'] = $v . $darkSuffix;
+  }
+  $color_sets_dark = '';
+  foreach ( $colors_dark as $k => $v ) {
+    if ( ! isset ( $s[$k] ) ) {
+      $s[$k] = '';
+    }
+    $color_sets_dark .= print_color_input_html ( $k, $v, '', '', 'p', '', '' );
+    $rc .= "\n        $('#admin_" . $k . "').val('');\n";
+  }
+
   $csp = ( $s['CSP'] ?: 'none' );
 
   set_today ( date ( 'Ymd' ) );
@@ -854,6 +868,7 @@ if ( ! $error ) {
    . ( function_exists ( 'imagepng' ) || function_exists ( 'imagegif' )
     ? print_radio ( 'ENABLE_GRADIENTS' ) : translate ( 'Not available' ) )
    . '</p><br>' . $color_sets . '
+          <p class="bold mt-2 mb-1">' . translate ( 'Dark mode colors' ) . '</p>' . $color_sets_dark . '
           <div><a href="#" class="btn btn-secondary" onclick="reset_colors(); return false;">' .
           translate('Reset Colors') . '</a></div>
           </fieldset>

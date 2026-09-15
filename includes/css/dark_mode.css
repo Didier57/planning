@@ -1,39 +1,18 @@
-/* Dark mode: overrides the CSS custom properties defined in styles.php. */
+/* Dark mode: palette overrides now live in styles.php (html[data-theme="dark"]
+   { --... }), driven by the *_DARK settings. This file only adapts the
+   components (Bootstrap v4 and icons) that do not consume the CSS variables. */
 html[data-theme="dark"] {
-  --bgcolor: #1b1b1f;
-  --bgrepeat: repeat;
-  --box-default-color: #3a3a40;
-  --captions: #9aa0a6;
-  --cellbg: #242428;
-  --fonts: #9aa0a6;
-  --h2color: #e8eaed;
-  --haseventsbg: #3c3c46;
-  --minicalfont: #9aa0a6;
-  --myevents: #f28b82;
-  --othermonthbg: #1f1f23;
-  --popupfg: #e8eaed;
-  --popupbg: #2c2c32;
-  --tablebg: #3a3a40;
-  --textcolor: #e8eaed;
-  --thbg: #2f2f35;
-  --thfg: #e8eaed;
-  --todaycellbg: #3d4b5c;
-  --weekendbg: #1f1f23;
-  --weeknumber: #9aa0a6;
-}
-
-html[data-theme="dark"] {
-  background-color: #1b1b1f;
-  color: #e8eaed;
+  background-color: var(--bgcolor);
+  color: var(--textcolor);
 }
 
 /* Bootstrap v4 components that do not use the theme variables. */
 html[data-theme="dark"] .navbar.bg-light {
-  background-color: #2f2f35 !important;
+  background-color: var(--thbg) !important;
 }
 
 html[data-theme="dark"] .navbar-light .navbar-nav .nav-link {
-  color: #e8eaed;
+  color: var(--textcolor);
 }
 
 html[data-theme="dark"] .navbar-light .navbar-nav .nav-link:hover,
@@ -42,37 +21,37 @@ html[data-theme="dark"] .navbar-light .navbar-nav .nav-link:focus {
 }
 
 html[data-theme="dark"] .form-control {
-  background-color: #242428;
-  border-color: #3a3a40;
-  color: #e8eaed;
+  background-color: var(--cellbg);
+  border-color: var(--box-default-color);
+  color: var(--textcolor);
 }
 
 html[data-theme="dark"] .form-control:focus {
-  background-color: #2c2c32;
-  color: #e8eaed;
+  background-color: var(--popupbg);
+  color: var(--textcolor);
 }
 
 html[data-theme="dark"] .btn-light {
-  background-color: #2f2f35;
-  border-color: #3a3a40;
-  color: #e8eaed;
+  background-color: var(--thbg);
+  border-color: var(--box-default-color);
+  color: var(--textcolor);
 }
 
 html[data-theme="dark"] .btn-light:hover {
-  background-color: #3a3a40;
+  background-color: var(--tablebg);
   border-color: #4a4a52;
   color: #ffffff;
 }
 
 html[data-theme="dark"] .modal-content,
 html[data-theme="dark"] .card {
-  background-color: #2c2c32;
-  border-color: #3a3a40;
-  color: #e8eaed;
+  background-color: var(--popupbg);
+  border-color: var(--box-default-color);
+  color: var(--textcolor);
 }
 
 html[data-theme="dark"] .table {
-  color: #e8eaed;
+  color: var(--textcolor);
 }
 
 html[data-theme="dark"] .page-header,
@@ -80,7 +59,7 @@ html[data-theme="dark"] h1,
 html[data-theme="dark"] h2,
 html[data-theme="dark"] h3,
 html[data-theme="dark"] h4 {
-  color: #e8eaed;
+  color: var(--h2color);
 }
 
 html[data-theme="dark"] a {
@@ -88,8 +67,8 @@ html[data-theme="dark"] a {
 }
 
 html[data-theme="dark"] .list-group-item {
-  background-color: #242428;
-  border-color: #3a3a40;
+  background-color: var(--cellbg);
+  border-color: var(--box-default-color);
 }
 
 /* Navigation arrows (arrow-left/right-circle.svg) use fill="currentColor",
@@ -105,11 +84,11 @@ html[data-theme="dark"] img.next {
    management, view_entry) render a caret via ::before with border-right using
    currentColor (dark), which disappears on dark backgrounds. */
 html[data-theme="dark"] .dropleft .dropdown-toggle::before {
-  border-right-color: #e8eaed;
+  border-right-color: var(--textcolor);
 }
 html[data-theme="dark"] .dropdown .dropdown-toggle::after,
 html[data-theme="dark"] .btn-group:not(.dropleft):not(.dropright):not(.dropup) .dropdown-toggle::after {
-  border-top-color: #e8eaed;
+  border-top-color: var(--textcolor);
 }
 
 /* Printer icon in the menu (printer.svg uses fill="currentColor" = black and

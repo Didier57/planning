@@ -806,6 +806,7 @@ Add New View: Ajouter une nouvelle vue
 Select: Sélectionner
 Bottom: En bas
 Top: En haut
+Toggle dark mode: Basculer le mode sombre
 Anyone: Tout le monde
 Participant: =
 Resource Calendars: Calendriers de ressources
@@ -1648,6 +1649,8 @@ Chinese (Traditional/Big5): Chinois (Traditionnel/Big5)
 Croatian: Croate
 Czech: Tchèque
 Danish: Danois
+Dark mode: Mode sombre
+Dark mode colors: Couleurs du mode sombre
 Dutch: Néerlandais
 Elven: =
 Estonian: Estonien
