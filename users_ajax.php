@@ -57,28 +57,29 @@ $error = '';
 
 if ($action == 'userlist') {
   // The full user list (logins, names, emails, admin flags) is administrative
-  // data; only a user administrator may retrieve it.
-  if (!users_ajax_can_manage_users()) {
-    ajax_send_error($notAuthStr);
-    exit;
-  }
+  // data; only a user administrator may retrieve it. A regular user may only
+  // retrieve their own account (used by the "My Profile" view).
+  $canManage = users_ajax_can_manage_users();
   // Use JSON to encode our list of users.
   $userlist = user_get_users();
   $ret_users = [];
   foreach ($userlist as $user) {
     // Skip public user
-    if ($user['cal_login'] != '__public__') {
-      $ret_users[] =  [
-        'login' => $user['cal_login'],
-        'lastname' => $user['cal_lastname'],
-        'firstname' => $user['cal_firstname'],
-        'is_admin' => empty($user['cal_is_admin']) ? 'N' : $user['cal_is_admin'],
-        'enabled' => empty($user['cal_enabled']) ? 'Y' : $user['cal_enabled'],
-        'email' => $user['cal_email'],
-        'fullname' => $user['cal_fullname']
-      ];
-      // Not including password hash 'cal_password'
-    }
+    if ($user['cal_login'] == '__public__')
+      continue;
+    // Non-administrators may only see their own account.
+    if (!$canManage && $user['cal_login'] != $login)
+      continue;
+    $ret_users[] =  [
+      'login' => $user['cal_login'],
+      'lastname' => $user['cal_lastname'],
+      'firstname' => $user['cal_firstname'],
+      'is_admin' => empty($user['cal_is_admin']) ? 'N' : $user['cal_is_admin'],
+      'enabled' => empty($user['cal_enabled']) ? 'Y' : $user['cal_enabled'],
+      'email' => $user['cal_email'],
+      'fullname' => $user['cal_fullname']
+    ];
+    // Not including password hash 'cal_password'
   }
   ajax_send_object('users', $ret_users, $sendPlainText);
 } else if ($action == 'save' && (users_ajax_can_manage_users() || getPostValue('login') == $login)) {
