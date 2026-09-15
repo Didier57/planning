@@ -36,7 +36,7 @@ function preventHacking ( $name, $instr ) {
   // Assume all database db changes make use of POST or else
   // they end in "_handler.php" or are one of a handful of known URLs.
   if ($script == "login.php" || $script=="register.php" ||
-    $script == "search_handler.php") {
+    $script == "forgot_password.php" || $script == "search_handler.php") {
     // No form token needed
   } else if ($_SERVER['REQUEST_METHOD'] === 'POST' ||
     ($_SERVER['REQUEST_METHOD'] === 'GET' &&
