@@ -156,22 +156,38 @@ $colors = [
   'POPUP_FG' => translate('Event popup text')
 ];
 $color_sets = '';
+$dark_defaults = [
+  'BGCOLOR' => '#1b1b1f',
+  'H2COLOR' => '#e8eaed',
+  'TEXTCOLOR' => '#e8eaed',
+  'MYEVENTS' => '#f28b82',
+  'TABLEBG' => '#3a3a40',
+  'THBG' => '#2f2f35',
+  'THFG' => '#e8eaed',
+  'CELLBG' => '#242428',
+  'TODAYCELLBG' => '#3d4b5c',
+  'HASEVENTSBG' => '#3c3c46',
+  'WEEKENDBG' => '#1f1f23',
+  'OTHERMONTHBG' => '#1f1f23',
+  'WEEKNUMBER' => '#9aa0a6',
+  'POPUP_BG' => '#2c2c32',
+  'POPUP_FG' => '#e8eaed'
+];
+$lightStr = translate ( 'Light' );
+$darkStr = translate ( 'Dark' );
 foreach ($colors as $k => $v) {
   $handler = 'color_change_handler_' . $k;
-  $color_sets .= print_color_input_html ( $k, $v, '', '', 'p', '', $handler );
-}
-
-$darkSuffix = ' (' . translate ( 'Dark mode' ) . ')';
-$colors_dark = [];
-foreach ( $colors as $k => $v ) {
-  $colors_dark[$k . '_DARK'] = $v . $darkSuffix;
-}
-$color_sets_dark = '';
-foreach ( $colors_dark as $k => $v ) {
-  if ( ! isset ( $prefarray[$k] ) ) {
-    $prefarray[$k] = '';
+  $dk = $k . '_DARK';
+  if ( empty ( $prefarray[$dk] ) ) {
+    $prefarray[$dk] = $dark_defaults[$k];
   }
-  $color_sets_dark .= print_color_input_html ( $k, $v, '', '', 'p', '', '' );
+  $color_sets .= '<div class="form-inline mb-1">'
+    . '<label class="mr-2" style="min-width: 20em;">' . $v . '</label>'
+    . '<span class="mr-1">' . $lightStr . '</span>'
+    . print_color_input_html ( $k, '', '', '', 'span', '', $handler )
+    . '<span class="ml-3 mr-1">' . $darkStr . '</span>'
+    . print_color_input_html ( $dk, '', '', '', 'span', '', '' )
+    . '</div>';
 }
 
 //determine if we can set timezones, if not don't display any options
@@ -862,8 +878,6 @@ if ( $CUSTOM_TRAILER == 'Y' ) { ?>
 <table>
 <tr class="ignore"><td class="aligntop" style="inline-size: 50%">
 <?php echo $color_sets;?>
-<p class="bold mt-2 mb-1"><?php echo translate('Dark mode colors'); ?></p>
-<?php echo $color_sets_dark;?>
 <div><a href="#" class="btn btn-secondary" onclick="reset_colors(); return false;"><?php etranslate('Reset Colors');?></a></div>
 
 
@@ -911,8 +925,8 @@ function reset_colors() {
       echo "  $('body').get(0).style.setProperty('--" . str_replace( '_', '', strtolower( $k ) ) . "', '$GLOBALS[$k]');\n";
       echo "  $('#pref_" . $k . "').val('$GLOBALS[$k]');\n";
     }
-    foreach ( $colors_dark as $k => $v ) {
-      echo "  $('#pref_" . $k . "').val('');\n";
+    foreach ( $colors as $k => $v ) {
+      echo "  $('#pref_" . $k . "_DARK').val('" . $dark_defaults[$k] . "');\n";
     }
   ?>
 }

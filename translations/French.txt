@@ -1649,6 +1649,7 @@ Chinese (Traditional/Big5): Chinois (Traditionnel/Big5)
 Croatian: Croate
 Czech: Tchèque
 Danish: Danois
+Dark: Sombre
 Dark mode: Mode sombre
 Dark mode colors: Couleurs du mode sombre
 Dutch: Néerlandais
@@ -1667,6 +1668,7 @@ Indonesian: Indonésien
 Italian: Italien
 Japanese: Japonais
 Korean: Coréen
+Light: Clair
 Lithuanian: Lithuanien
 Norwegian: Norvégien
 Polish: Polonais

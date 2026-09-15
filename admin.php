@@ -218,32 +218,48 @@ if ( ! $error ) {
     'POPUP_FG' => translate('Event popup text')
   ];
 
+  // Default palette for dark mode (the original fallback colors).
+  $dark_defaults = [
+    'BGCOLOR' => '#1b1b1f',
+    'H2COLOR' => '#e8eaed',
+    'TEXTCOLOR' => '#e8eaed',
+    'MYEVENTS' => '#f28b82',
+    'TABLEBG' => '#3a3a40',
+    'THBG' => '#2f2f35',
+    'THFG' => '#e8eaed',
+    'CELLBG' => '#242428',
+    'TODAYCELLBG' => '#3d4b5c',
+    'HASEVENTSBG' => '#3c3c46',
+    'WEEKENDBG' => '#1f1f23',
+    'OTHERMONTHBG' => '#1f1f23',
+    'WEEKNUMBER' => '#9aa0a6',
+    'POPUP_BG' => '#2c2c32',
+    'POPUP_FG' => '#e8eaed'
+  ];
+
+  $lightStr = translate ( 'Light' );
+  $darkStr = translate ( 'Dark' );
   foreach ( $colors as $k => $v ) {
     $GLOBALS[$k] = $s[$k];
-    // CSS custom-property name for this color (matches styles.php :root, e.g.
-    // POPUP_BG -> --popupbg). The id/value must be baked into the emitted JS
-    // strings (not concatenated with a bare $k, which would be an undefined JS
-    // identifier), and the color value must be quoted (an unquoted #ffffff is a
-    // JS syntax error that would break the whole <script>).
     $vn = str_replace ( '_', '', strtolower ( $k ) );
-    // Change the color in the current page live as the user edits it.
+    // Live preview for the light color.
     $cch .= "      function color_change_handler_$k() {\n        var color = $('#admin_" . $k . "').val();\n        $('body').get(0).style.setProperty('--" . $vn . "', color);\n      }\n";
-    $color_sets .= print_color_input_html ( $k, $v, '', '', 'p', '', 'color_change_handler_' . $k );
-    $rc .= "\n        $('#admin_" . $k . "').val('" . $GLOBALS[$k] . "');\n        $('body').get(0).style.setProperty('--" . $vn . "', '" . $GLOBALS[$k] . "');\n";
-  }
-
-  $darkSuffix = ' (' . translate ( 'Dark mode' ) . ')';
-  $colors_dark = [];
-  foreach ( $colors as $k => $v ) {
-    $colors_dark[$k . '_DARK'] = $v . $darkSuffix;
-  }
-  $color_sets_dark = '';
-  foreach ( $colors_dark as $k => $v ) {
-    if ( ! isset ( $s[$k] ) ) {
-      $s[$k] = '';
+    // Pre-fill the dark value with the default palette if not yet configured,
+    // so the color picker never appears empty/black.
+    $dk = $k . '_DARK';
+    if ( empty ( $s[$dk] ) ) {
+      $s[$dk] = $dark_defaults[$k];
     }
-    $color_sets_dark .= print_color_input_html ( $k, $v, '', '', 'p', '', '' );
-    $rc .= "\n        $('#admin_" . $k . "').val('');\n";
+    // One row per color: light picker and dark picker side by side.
+    $color_sets .= '<div class="form-inline mb-1">'
+      . '<label class="mr-2" style="min-width: 20em;">' . $v . '</label>'
+      . '<span class="mr-1">' . $lightStr . '</span>'
+      . print_color_input_html ( $k, '', '', '', 'span', '', 'color_change_handler_' . $k )
+      . '<span class="ml-3 mr-1">' . $darkStr . '</span>'
+      . print_color_input_html ( $dk, '', '', '', 'span', '', '' )
+      . '</div>';
+    $rc .= "\n        $('#admin_" . $k . "').val('" . $GLOBALS[$k] . "');\n        $('body').get(0).style.setProperty('--" . $vn . "', '" . $GLOBALS[$k] . "');\n";
+    $rc .= "\n        $('#admin_" . $k . "_DARK').val('" . $dark_defaults[$k] . "');\n";
   }
 
   $csp = ( $s['CSP'] ?: 'none' );
@@ -867,8 +883,7 @@ if ( ! $error ) {
    . translate ( 'Enable gradient images for background colors' ) . ':</label>'
    . ( function_exists ( 'imagepng' ) || function_exists ( 'imagegif' )
     ? print_radio ( 'ENABLE_GRADIENTS' ) : translate ( 'Not available' ) )
-   . '</p><br>' . $color_sets . '
-          <p class="bold mt-2 mb-1">' . translate ( 'Dark mode colors' ) . '</p>' . $color_sets_dark . '
+    . '</p><br>' . $color_sets . '
           <div><a href="#" class="btn btn-secondary" onclick="reset_colors(); return false;">' .
           translate('Reset Colors') . '</a></div>
           </fieldset>
