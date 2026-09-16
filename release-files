@@ -19,6 +19,7 @@ composer.json
 composer.lock
 css_cacher.php
 day.php
+db_backup.php
 del_entry.php
 docadd.php
 docdel.php

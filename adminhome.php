@@ -114,6 +114,9 @@ if ( $is_nonuser_admin ) {
 
     $names[] = translate ( 'Import SQL' );
     $links[] = 'import_sql.php';
+
+    $names[] = translate ( 'Database Backup' );
+    $links[] = 'db_backup.php';
   }
   /*
  This Activity Log link shows ALL activity for ALL events, so you really need

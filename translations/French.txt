@@ -535,6 +535,13 @@ Table %s: %s: Table %s : %s
 The "webcal_config" settings table is never touched.: La table de paramètres "webcal_config" n'est jamais modifiée.
 Warning: existing calendar data will be wiped.: Attention : les données d'agenda existantes seront effacées.
 SQL file: Fichier SQL
+Backup: Sauvegarde
+Database Backup: Sauvegarde de la base de données
+Database Backup / Restore: Sauvegarde / Restauration de la base de données
+Download backup: Télécharger la sauvegarde
+Download a full backup of the database as a .sql file.: Télécharger une sauvegarde complète de la base de données au format .sql.
+Restore: Restauration
+Upload a .sql backup file to restore the database. Existing calendar data will be wiped. The "webcal_config" settings table is never touched.: Transférez un fichier de sauvegarde .sql pour restaurer la base de données. Les données de calendrier existantes seront effacées. La table de réglages "webcal_config" n'est jamais modifiée.
 I understand that existing records will be wiped.: Je comprends que les enregistrements existants seront effacés.
 Upload a WebCalendar database dump (.sql) to replace the current data. All existing records in the tables present in the dump will be deleted first, then re-inserted from the file. The database schema itself is not modified.: Transférez une copie de la base de données WebCalendar (.sql) pour remplacer les données actuelles. Tous les enregistrements existants dans les tables présentes dans la copie seront d'abord supprimés, puis réinsérés depuis le fichier. Le schéma de la base de données n'est pas modifié.
 

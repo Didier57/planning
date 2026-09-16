@@ -456,6 +456,7 @@ if (empty($thisday))
                 print_menu_item(translate('Groups'), 'groups.php');
               }
               print_menu_item(translate('Import SQL'), 'import_sql.php');
+              print_menu_item(translate('Database Backup'), 'db_backup.php');
             }
 
             // Nonuser Admin Settings
