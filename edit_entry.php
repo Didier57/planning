@@ -604,51 +604,56 @@ $tabI = 0;
         <input class="form-control" type="text" name="name" id="entry_brief" size="25" maxlength="80" value="<?php echo htmlspecialchars($name); ?>">
         <label for="description" data-toggle="tooltip" data-placement="top" title="<?php etooltip('full-description-help'); ?>">
           <?php etranslate('Full Description'); ?>:</label>
-        <textarea class="form-control" rows="5" name="description" id="description"><?php echo htmlspecialchars($description); ?></textarea>
+        <textarea class="form-control" rows="3" name="description" id="description"><?php echo htmlspecialchars($description); ?></textarea>
 
+        <div class="form-row">
         <?php if ($DISABLE_ACCESS_FIELD != 'Y') { ?>
-          <label for="access" data-toggle="tooltip" data-placement="top" data-html="true" title="<?php etooltip('access-help', '', true); ?>">
-            <?php etranslate('Access'); ?>:</label>
-          <select class="form-control" name="access" id="entry_access" value="<?php echo htmlspecialchars($name); ?>">
-            <option value="P" <?php echo ($access == 'P' || !strlen($access) ? $selected : ''); ?>>
-              <?php etranslate('Public'); ?></option>
-            <option value="R" <?php echo ( $access == 'R' ? $selected : '' ); ?>>
-              <?php etranslate('Private'); ?></option>
-            <option value="C" <?php echo ( $access == 'C' ? $selected : '' ); ?>>
-              <?php etranslate('Confidential'); ?></option>
-          </select>
+          <div class="form-group col-md-4 mb-2">
+            <label for="access" data-toggle="tooltip" data-placement="top" data-html="true" title="<?php etooltip('access-help', '', true); ?>">
+              <?php etranslate('Access'); ?>:</label>
+            <select class="form-control" name="access" id="entry_access">
+              <option value="P" <?php echo ($access == 'P' || !strlen($access) ? $selected : ''); ?>>
+                <?php etranslate('Public'); ?></option>
+              <option value="R" <?php echo ( $access == 'R' ? $selected : '' ); ?>>
+                <?php etranslate('Private'); ?></option>
+              <option value="C" <?php echo ( $access == 'C' ? $selected : '' ); ?>>
+                <?php etranslate('Confidential'); ?></option>
+            </select>
+          </div>
         <?php } ?>
 
         <?php if ($DISABLE_PRIORITY_FIELD != 'Y') { ?>
-          <label for="priority" data-toggle="tooltip" data-placement="top" title="<?php etooltip('priority-help'); ?>">
-            <?php etranslate('Priority'); ?> :</label>
-          <select class="form-control" name="priority" id="entry_prio">
-            <?php
-            $pri = [
-              '',
-              translate('High'),
-              translate('Medium'),
-              translate('Low')
-            ];
-            for ($i = 1; $i <= 9; $i++) {
-              echo '<option value="' . $i . '"'
-                . ($priority == $i ? $selected : '')
-                . '>' . $i . '-' . $pri[ceil($i / 3)] . '</option>';
-            }
-            ?>
-          </select>
+          <div class="form-group col-md-4 mb-2">
+            <label for="priority" data-toggle="tooltip" data-placement="top" title="<?php etooltip('priority-help'); ?>">
+              <?php etranslate('Priority'); ?> :</label>
+            <select class="form-control" name="priority" id="entry_prio">
+              <?php
+              $pri = [
+                '',
+                translate('High'),
+                translate('Medium'),
+                translate('Low')
+              ];
+              for ($i = 1; $i <= 9; $i++) {
+                echo '<option value="' . $i . '"'
+                  . ($priority == $i ? $selected : '')
+                  . '>' . $i . '-' . $pri[ceil($i / 3)] . '</option>';
+              }
+              ?>
+            </select>
+          </div>
         <?php } ?>
 
         <?php if (!empty($categories) && $CATEGORIES_ENABLED == 'Y') { ?>
-          <!-- CATEGORIES -->
-          <label for="category" data-toggle="tooltip" data-placement="top" title="<?php etooltip('category-help'); ?>">
-            <?php etranslate('Category'); ?>:</label>
-          <div>
-            <!-- <button class="btn" type="button" onclick="editCats( event )"><?php etranslate('Edit');?></button> -->
+          <div class="form-group col-md-4 mb-2">
+            <!-- CATEGORIES -->
+            <label for="category" data-toggle="tooltip" data-placement="top" title="<?php etooltip('category-help'); ?>">
+              <?php etranslate('Category'); ?>:</label>
             <input class="form-control" type="text" readonly name="catnames" id="entry_categories" onclick="editCats(event)" style="cursor: pointer;" value="<?php echo $catNames . (empty($catNames) ? 'None' : ''); ?>">
             <input class="form-control" type="hidden" id="cat_id" name="cat_id" value="<?php echo $catList;?>">
           </div>
         <?php } ?>
+        </div>
 
         <?php if ($eType == 'task') { // Only for tasks.
           $completed_visible = (strlen($completed) ? 'visible' : 'hidden'); ?>
@@ -708,36 +713,47 @@ $tabI = 0;
           <input type="hidden" name="others_complete" value="<?php echo $others_complete; ?>">
         <?php } /* end tasks only */ ?>
 
+        <div class="form-row">
         <?php if ($DISABLE_LOCATION_FIELD != 'Y') { ?>
-          <label for="location" data-toggle="tooltip" data-placement="top" title="<?php etooltip('location-help'); ?>">
-            <?php etranslate('Location'); ?>:</label>
-          <input class="form-control" type="text" name="location" id="entry_location" size="55" value="<?php echo htmlspecialchars($location); ?>">
+          <div class="form-group col-md-6 mb-2">
+            <label for="location" data-toggle="tooltip" data-placement="top" title="<?php etooltip('location-help'); ?>">
+              <?php etranslate('Location'); ?>:</label>
+            <input class="form-control" type="text" name="location" id="entry_location" size="55" value="<?php echo htmlspecialchars($location); ?>">
+          </div>
         <?php } ?>
 
         <?php if ($DISABLE_URL_FIELD != 'Y') { ?>
-          <label for="url" data-toggle="tooltip" data-placement="top" title="<?php etooltip('url-help'); ?>">
-            <?php etranslate('URL'); ?>:</label>
-          <input class="form-control" type="text" name="entry_url" id="entry_url" size="100" value="<?php echo htmlspecialchars($location); ?>">
+          <div class="form-group col-md-6 mb-2">
+            <label for="url" data-toggle="tooltip" data-placement="top" title="<?php etooltip('url-help'); ?>">
+              <?php etranslate('URL'); ?>:</label>
+            <input class="form-control" type="text" name="entry_url" id="entry_url" size="100" value="<?php echo htmlspecialchars($location); ?>">
+          </div>
         <?php } ?>
-
-        <label for="date" data-toggle="tooltip" data-placement="top" title="<?php etooltip('date-help'); ?>">
-          <?php echo $eType == 'task' ? translate('Start Date') : translate('Date'); ?>:</label>
-        <?php echo date_selection('', $cal_date); ?>
+        </div>
 
         <?php if ($eType != 'task') {
           if (!isset($duration) || !is_numeric($duration))
             $duration = 0;
           $dur_h = intval($duration / 60); ?>
-          <label for="timetype" data-toggle="tooltip" data-placement="top" data-html="true" title="<?php etooltip('time-help', '', true); ?>">
-            <?php etranslate('Type'); ?>:</label>
-          <select class="form-control" name="timetype" id="timetype" onchange="timetype_handler()">
-            <option value="U" <?php echo $allday != 'Y' && $hour == -1 ? $selected : ''; ?>>
-              <?php etranslate('Untimed event'); ?></option>
-            <option value="T" <?php echo $allday != 'Y' && $hour >= 0 ? $selected : ''; ?>>
-              <?php etranslate('Timed event'); ?></option>
-            <option value="A" <?php echo $allday == 'Y' ? $selected : ''; ?>>
-              <?php etranslate('All day event'); ?></option>
-          </select>
+          <div class="form-row">
+            <div class="form-group col-md-4 mb-2">
+              <label for="date" data-toggle="tooltip" data-placement="top" title="<?php etooltip('date-help'); ?>">
+                <?php etranslate('Date'); ?>:</label>
+              <?php echo date_selection('', $cal_date); ?>
+            </div>
+            <div class="form-group col-md-4 mb-2">
+              <label for="timetype" data-toggle="tooltip" data-placement="top" data-html="true" title="<?php etooltip('time-help', '', true); ?>">
+                <?php etranslate('Type'); ?>:</label>
+              <select class="form-control" name="timetype" id="timetype" onchange="timetype_handler()">
+                <option value="U" <?php echo $allday != 'Y' && $hour == -1 ? $selected : ''; ?>>
+                  <?php etranslate('Untimed event'); ?></option>
+                <option value="T" <?php echo $allday != 'Y' && $hour >= 0 ? $selected : ''; ?>>
+                  <?php etranslate('Timed event'); ?></option>
+                <option value="A" <?php echo $allday == 'Y' ? $selected : ''; ?>>
+                  <?php etranslate('All day event'); ?></option>
+              </select>
+            </div>
+          </div>
           <?php if (empty($TZ_notice)) { ?>
             <span id="timezonenotice" style="visibility:hidden;">
               <label for="timezonenoticetext" data-toggle="tooltip" data-placement="top" title="<?php etooltip('Time entered here is based on your Timezone'); ?>">
@@ -771,17 +787,28 @@ $tabI = 0;
           <?php } ?>
 
         <?php } else { /* eType == task */ ?>
-          <label for="entry_hour" data-toggle="tooltip" data-placement="top" data-html="true" title="<?php etooltip('time-help', '', true); ?>">
-            <?php etranslate('Start Time'); ?>:</label>
-          <?php echo time_selection('entry_', $cal_time); ?>
-
-          <label for="due_YMD" data-toggle="tooltip" data-placement="top" data-html="true" title="<?php etooltip('date-help'); ?>">
-            <?php etranslate('Due Date'); ?>:</label>
-          <?php echo date_selection('due_', $due_date); ?>
-
-          <label for="due_hour" data-toggle="tooltip" data-placement="top" data-html="true" title="<?php etooltip('date-help'); ?>">
-            <?php etranslate('Due Time'); ?>:</label>
-          <?php echo time_selection('due_', $due_time); ?>
+          <div class="form-row">
+            <div class="form-group col-md-3 mb-2">
+              <label for="date" data-toggle="tooltip" data-placement="top" title="<?php etooltip('date-help'); ?>">
+                <?php etranslate('Start Date'); ?>:</label>
+              <?php echo date_selection('', $cal_date); ?>
+            </div>
+            <div class="form-group col-md-3 mb-2">
+              <label for="entry_hour" data-toggle="tooltip" data-placement="top" data-html="true" title="<?php etooltip('time-help', '', true); ?>">
+                <?php etranslate('Start Time'); ?>:</label>
+              <?php echo time_selection('entry_', $cal_time); ?>
+            </div>
+            <div class="form-group col-md-3 mb-2">
+              <label for="due_YMD" data-toggle="tooltip" data-placement="top" data-html="true" title="<?php etooltip('date-help'); ?>">
+                <?php etranslate('Due Date'); ?>:</label>
+              <?php echo date_selection('due_', $due_date); ?>
+            </div>
+            <div class="form-group col-md-3 mb-2">
+              <label for="due_hour" data-toggle="tooltip" data-placement="top" data-html="true" title="<?php etooltip('date-help'); ?>">
+                <?php etranslate('Due Time'); ?>:</label>
+              <?php echo time_selection('due_', $due_time); ?>
+            </div>
+          </div>
         <?php } ?>
 
         <?php
