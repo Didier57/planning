@@ -108,7 +108,14 @@ if (empty($error) && !empty($delete)) {
       $error = db_error();
     }
   }
-  if (empty($delIcon) && (!empty($ENABLE_ICON_UPLOADS) && $ENABLE_ICON_UPLOADS == 'Y' || $is_admin)) {
+  if (!empty($delIcon)) {
+    // Remove the category icon.
+    if (!dbi_execute(
+      'UPDATE webcal_categories
+      SET cat_icon_mime = NULL, cat_icon_blob = NULL WHERE cat_id = ?',
+      [$id]))
+      $error = db_error();
+  } else if (!empty($ENABLE_ICON_UPLOADS) && $ENABLE_ICON_UPLOADS == 'Y' || $is_admin) {
     // Save icon if uploaded.
     if (!empty($file['tmp_name'])) {
         if (($file['type'] == 'image/gif' || $file['type'] == 'image/png')
