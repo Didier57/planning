@@ -746,7 +746,7 @@ $tabI = 0;
             <div id="timezonenoticetext"><?php echo $TZ_notice; ?></div>
           <?php } ?>
 
-          <div class="form-inline mb-2" id="timeentrystart" style="visibility:hidden;">
+          <div class="form-inline mb-2" id="timeentrystart" style="visibility:hidden; display:inline-flex;">
             <label for="entry_hour" data-toggle="tooltip" data-placement="top" title="<?php etooltip('time-help'); ?>">
               <?php etranslate('Time'); ?>:</label>
             <?php echo time_selection('entry_', $cal_time); ?>
@@ -764,7 +764,7 @@ $tabI = 0;
               &nbsp;(<label for="duration_h"><?php echo $hoursStr; ?></label>: <label for="duration_m"><?php echo $minuteStr; ?></label>)
             </div>
           <?php } else { ?>
-            <div class="form-inline" id="timeentryend" style="visibility:hidden;">
+            <div class="form-inline" id="timeentryend" style="visibility:hidden; display:inline-flex;">
               <label data-toggle="tooltip" data-placement="top" title="<?php etooltip('end-time-help'); ?>">&nbsp;-&nbsp;</label>
               <?php echo time_selection('end_', ($id ? add_duration($cal_time, $duration) : $cal_time)); ?>
             </div>
