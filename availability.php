@@ -55,8 +55,12 @@ print_header (
 $next_url = $prev_url = '?users=' . $users;
 $time = mktime ( 0, 0, 0, $month, $day, $year );
 $date = date ( 'Ymd', $time );
-$next_url .= strftime ( '&amp;year=%Y&amp;month=%m&amp;day=%d', $time + 86400 );
-$prev_url .= strftime ( '&amp;year=%Y&amp;month=%m&amp;day=%d', $time - 86400 );
+$next_url .= '&amp;year=' . date ( 'Y', $time + 86400 )
+ . '&amp;month=' . date ( 'm', $time + 86400 )
+ . '&amp;day=' . date ( 'd', $time + 86400 );
+$prev_url .= '&amp;year=' . date ( 'Y', $time - 86400 )
+ . '&amp;month=' . date ( 'm', $time - 86400 )
+ . '&amp;day=' . date ( 'd', $time - 86400 );
 $span = ( $WORK_DAY_END_HOUR - $WORK_DAY_START_HOUR ) * 3 + 1;
 
 $users = explode ( ',', $users );
@@ -77,7 +81,7 @@ echo '
  . $nextStr . '"></a>
       <div class="title">
         <span class="date">';
-printf ( "%s, %s %d, %d", weekday_name ( strftime ( "%w", $time ) ),
+printf ( "%s, %s %d, %d", weekday_name ( date ( "w", $time ) ),
   month_name ( $month - 1 ), $day, $year );
 echo $weekNumStr . '</span><br>
       </div>
