@@ -216,7 +216,7 @@ switch ( $_SERVER['REQUEST_METHOD'] ) {
     echo export_ical();
     break;
 
-  case 'OPTIONS';
+  case 'OPTIONS':
     header ( 'Allow: GET, PUT, OPTIONS' );
     break;
 

@@ -2835,7 +2835,7 @@ function format_ical ( $event ) {
       case 'ACCEPTED':
         $fevent['Status'] = 'A';
         break;
-      case 'CANCELLED';
+      case 'CANCELLED':
         $fevent['Status'] = 'D';
         break;
       case 'DECLINED':
