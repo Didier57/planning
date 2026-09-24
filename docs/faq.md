@@ -24,8 +24,7 @@ distribute it freely under the terms of this license.
 
 ### What PHP version do I need?
 
-PHP 8.0 or later. PHP 8.2+ is recommended. WebCalendar is tested against
-PHP 8.2, 8.3, and 8.4 in CI.
+PHP 8.2 or later. WebCalendar is tested against PHP 8.3 in CI.
 
 ### Which database should I use?
 
@@ -117,7 +116,7 @@ Check your PHP error log. Common causes:
 
 - Missing PHP extensions (database driver, mbstring)
 - Incorrect file permissions on `includes/settings.php`
-- PHP version too old (requires 8.0+)
+- PHP version too old (requires 8.2+)
 
 ### Events show at the wrong time.
 

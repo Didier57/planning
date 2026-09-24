@@ -1,4 +1,4 @@
-# WebCalendar v1.9.16 Installation Guide
+# WebCalendar v1.9.23 Installation Guide
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@
 
 ## Requirements
 
-**PHP**: 8.0 minimum, 8.2+ recommended (CI tests against 8.2, 8.3, 8.4)
+**PHP**: 8.2 minimum (CI tests against 8.3)
 
 **PHP Extensions** (required):
 - A database driver: `mysqli`, `pgsql`, `sqlite3`, `oci8`, `ibm_db2`,
@@ -112,12 +112,6 @@ docker compose -f docker/docker-compose-php8.yml up
 
 ```bash
 docker compose -f docker/docker-compose-php8-dev.yml up
-```
-
-**SQLite Development** (port 8081):
-
-```bash
-docker compose -f docker/docker-compose-sqlite-dev.yml up
 ```
 
 Shell access into a running container:

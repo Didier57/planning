@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Documentation synced with the current codebase. The version headers in `docs/index.md`, `admin-guide.md`, `installation.md`, `user-guide.md`, `developer-guide.md`, and `WebCalendar-Database.md` now read v1.9.23 (they still said v1.9.16, or v1.9.13 for the database reference). The stated PHP requirement is now 8.2+ everywhere it was still 8.0 (`index.md`, `installation.md`, `faq.md`, `upgrade-guide.md`, `migration-v2.md`, `v2-development.md`), matching `composer.json`'s `^8.2`, and `faq.md` no longer claims CI runs against 8.2/8.3/8.4 when `ci.yml` only tests 8.3. `docker.md`, `installation.md`, and `developer-guide.md` no longer reference the `docker-compose-php8.1*.yml` and `docker-compose-sqlite-dev.yml` files that do not exist in `docker/`. `migration-v2.md`'s schema section was extended to v1.9.23 and now records the v1.9.22 `cal_passwd` widening
 - Config defaults and `db_load_config()` moved from `wizard/shared/default_config.php` to `includes/default_config.php`. The wizard still reads it as the single source of truth, but it is no longer inside a directory administrators are told to delete (#707)
 
 ### Fixed

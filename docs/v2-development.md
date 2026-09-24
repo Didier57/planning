@@ -51,7 +51,7 @@ of that work.
 
 **Infrastructure:**
 
-- PHP 8.0+ required, 8.2+ recommended
+- PHP 8.2+ required
 - Formally deprecate untested database backends (Oracle, DB2, ODBC,
   Interbase) in documentation
 - Fix cross-platform Makefile (currently Linux-only due to `sha384sum`)

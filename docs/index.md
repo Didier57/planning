@@ -2,8 +2,8 @@
 
 WebCalendar is an open-source, multi-user, web-based calendar application written in PHP.
 
-- **Current Version:** v1.9.16
-- **PHP Requirements:** 8.0+
+- **Current Version:** v1.9.23
+- **PHP Requirements:** 8.2+
 - **License:** GPLv2
 - **Source Code:** [github.com/craigk5n/webcalendar](https://github.com/craigk5n/webcalendar)
 

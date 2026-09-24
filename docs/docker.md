@@ -9,7 +9,6 @@ development, and testing.
 - [Available Configurations](#available-configurations)
 - [Production Deployment](#production-deployment)
 - [Development Environment](#development-environment)
-- [SQLite Development](#sqlite-development)
 - [Testing](#testing)
 - [Environment Variables](#environment-variables)
 - [Volumes and Data Persistence](#volumes-and-data-persistence)
@@ -28,10 +27,7 @@ docker-compose -f docker/docker-compose-php8.yml up
 | File | Purpose | Port(s) | Database |
 |------|---------|---------|----------|
 | `docker-compose-php8.yml` | Production | 8080 | MariaDB |
-| `docker-compose-php8.1.yml` | Production (PHP 8.1) | 8080 | MariaDB |
 | `docker-compose-php8-dev.yml` | Development | 8080, 8081 | MariaDB + PostgreSQL |
-| `docker-compose-php8.1-dev.yml` | Development (PHP 8.1) | 8080 | MariaDB |
-| `docker-compose-sqlite-dev.yml` | Development (SQLite) | 8081 | SQLite3 |
 | `docker-compose-test-mysql.yml` | CI testing | internal | MySQL 8.0 |
 | `docker-compose-test-postgresql.yml` | CI testing | internal | PostgreSQL |
 | `docker-compose-test-sqlite.yml` | CI testing | internal | SQLite3 |
@@ -73,25 +69,8 @@ docker-compose -f docker/docker-compose-php8-dev.yml up
 - Port 8080: WebCalendar with MariaDB
 - Port 8081: WebCalendar with PostgreSQL
 
-### MariaDB only (PHP 8.1)
-
-```bash
-docker-compose -f docker/docker-compose-php8.1-dev.yml up
-```
-
-- Port 8080: WebCalendar with MariaDB
-- Local files mounted for live editing
-
-## SQLite Development
-
-No external database server needed:
-
-```bash
-docker-compose -f docker/docker-compose-sqlite-dev.yml up
-```
-
-- Port 8081: WebCalendar with SQLite3
-- Database stored as a file inside the container
+Both use the `Dockerfile-php8-dev` image and mount the repository into the
+container for live editing.
 
 ## Testing
 

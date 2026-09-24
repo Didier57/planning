@@ -1,6 +1,6 @@
 # WebCalendar Developer Guide
 
-Version: v1.9.16
+Version: v1.9.23
 
 ## Table of Contents
 
@@ -108,8 +108,8 @@ make    # Copies vendor assets from vendor/ to pub/ (Linux only, requires sha384
 ### Docker development
 
 ```bash
-docker-compose -f docker/docker-compose-php8.1-dev.yml build
-docker-compose -f docker/docker-compose-php8.1-dev.yml up
+docker-compose -f docker/docker-compose-php8-dev.yml build
+docker-compose -f docker/docker-compose-php8-dev.yml up
 # Access at http://localhost:8080/
 ```
 

@@ -1,6 +1,6 @@
 # WebCalendar User Guide
 
-**Version 1.9.16**
+**Version 1.9.23**
 
 ## Table of Contents
 

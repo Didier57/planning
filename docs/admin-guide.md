@@ -1,4 +1,4 @@
-# WebCalendar v1.9.16 Administration Guide
+# WebCalendar v1.9.23 Administration Guide
 
 ## Table of Contents
 

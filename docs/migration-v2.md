@@ -79,7 +79,7 @@ historical reference.
 The upgrade wizard handles all schema changes automatically. The
 following is for reference only — you do not need to run these manually.
 
-### Changes from v1.9.0 to v1.9.16
+### Changes from v1.9.0 to v1.9.23
 
 **v1.9.6** — Entry categories primary key constraint:
 ```sql
@@ -105,6 +105,14 @@ ALTER TABLE webcal_entry MODIFY cal_url VARCHAR(255);
 ```sql
 CREATE TABLE IF NOT EXISTS webcal_blob ( ... );
 ```
+
+**v1.9.22** — Password column widened for bcrypt:
+```sql
+ALTER TABLE webcal_user MODIFY cal_passwd VARCHAR(255);
+```
+
+> v1.9.17, v1.9.18, v1.9.19, v1.9.20, v1.9.21, and v1.9.23 shipped no
+> database schema changes.
 
 ### Upgrading from Very Old Versions (pre-1.9.0)
 
@@ -146,7 +154,8 @@ These environment variables were added in the v1.9.x series:
 |---------------------|-------------|-------------|
 | v1.9.0 - v1.9.10 | 7.4 | 8.0 |
 | v1.9.11 - v1.9.16 | 8.0 | 8.2+ |
-| v2.0.x | 8.0 | 8.2+ |
+| v1.9.17 - v1.9.23 | 8.2 | 8.2+ |
+| v2.0.x | 8.2 | 8.2+ |
 
 If upgrading from PHP 7.x, update PHP first and verify your application
 works before upgrading WebCalendar.

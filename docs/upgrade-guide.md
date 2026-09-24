@@ -47,7 +47,7 @@ Verify your PHP version meets the requirements for the target release:
 php -v
 ```
 
-WebCalendar v1.9.16 requires PHP 8.0 or later.
+WebCalendar v1.9.23 requires PHP 8.2 or later.
 
 ## Upgrade Methods
 
