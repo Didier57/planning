@@ -734,6 +734,18 @@ function export_get_event_entry( $id = 'all', $attachment = false ) {
       $sql .= ' AND we.cal_mod_date >= ?';
       $sql_params[] = $moddate;
     }
+  } else if ( $attachment == true ) {
+    // Calendar parts for email notifications are generated on behalf of a
+    // recipient who may not be the logged-in user, and the event's creator is
+    // not necessarily a participant (e.g. an assistant booking a meeting on
+    // someone else's calendar). Do not restrict by login here, and pick a
+    // single participant row so the VEVENT is emitted exactly once.
+    $sql .= 'WHERE we.cal_id = ? AND weu.cal_id = ? AND weu.cal_login = (
+      SELECT MIN( p.cal_login ) FROM webcal_entry_user p
+      WHERE p.cal_id = ? AND p.cal_status IN ( \'W\', \'A\', \'D\' ) )';
+    $sql_params[] = $id;
+    $sql_params[] = $id;
+    $sql_params[] = $id;
   } else {
     $sql .= 'WHERE we.cal_id = ? AND weu.cal_id = ? AND
       ( weu.cal_login = ?';
@@ -744,9 +756,7 @@ function export_get_event_entry( $id = 'all', $attachment = false ) {
     // calendars, particularly non-user calendars.
     // "webcal_entry_user.cal_id = '$id'";
     // there may be a better to do this
-    if ( $attachment == true ) {
-      $sql .= ' OR weu.cal_login = we.cal_create_by';
-    } else if ( ! empty ( $user ) && $user != $login ) {
+    if ( ! empty ( $user ) && $user != $login ) {
       $sql .= ' OR weu.cal_login = ?';
       $sql_params[] = $user;
     } else if ( $include_layers && $layers ) {
