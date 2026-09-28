@@ -5,6 +5,22 @@ global $GROUPS_ENABLED,$WORK_DAY_START_HOUR,$WORK_DAY_END_HOUR;
 load_user_categories();
 ?>
 var bydayAr = [], bymonthdayAr = [], bysetposAr = [];
+// Initial participants list, captured on page load, used to detect a change
+// of the participants selection (JavaScript has no "select-multiple" type).
+var initialPartList = null;
+
+// Return the current participants as a sorted, comma-joined list.
+function partList() {
+  var sel = ( typeof form != 'undefined' && form
+    ? form.elements['selectedPart[]'] : null );
+  var arr = [];
+  if ( sel ) {
+    for ( var k = 0; k < sel.length; k++ )
+      arr.push ( sel.options[k].value );
+    arr.sort();
+  }
+  return arr.join ( ',' );
+}
 
 var byday_labels = ['SU','MO','TU','WE','TH','FR','SA'];
 var byday_names = [
@@ -47,6 +63,9 @@ function validate_and_submit() {
    }
   }
 
+  //Add code to make HTMLArea code stick in TEXTAREA
+ if (typeof editor != "undefined") editor._textArea.value = editor.getHTML();
+
   // is there really a change?
   changed = false;
   for ( i = 0; i < form.elements.length; i++ ) {
@@ -59,6 +78,9 @@ function validate_and_submit() {
         break;
       case "text":
       case "textarea":
+      case "date":
+      case "time":
+      case "datetime-local":
         if ( field.value != field.defaultValue )
           changed = true;
         break;
@@ -74,12 +96,13 @@ function validate_and_submit() {
         break;
     }
   }
+  // There is no "select-multiple" case in JavaScript, so compare the
+  // current participants list with the one the form was rendered with.
+  if ( initialPartList !== null && partList() != initialPartList )
+    changed = true;
   if ( changed ) {
     form.entry_changed.value = "yes";
   }
-
-//Add code to make HTMLArea code stick in TEXTAREA
- if (typeof editor != "undefined") editor._textArea.value = editor.getHTML();
 
  //Check if Event date is valid
   var d = $('#_YMD');
@@ -830,6 +853,10 @@ function onLoad() {
   form = document.editentryform;
   elements = document.editentryform.elements;
   elementlength = document.editentryform.elements.length;
+
+  //remember the initial participants so we can detect changes on submit
+  if ( form.elements['selectedPart[]'] )
+    initialPartList = partList();
 
   //initialize byxxxAr Objects
   if ( form.bydayList ) {

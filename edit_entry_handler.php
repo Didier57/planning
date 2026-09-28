@@ -998,8 +998,23 @@ if( empty( $error ) ) {
 
             $msg .= $url . "\n\n";
           }
+          // The participant rows were deleted earlier when this event was
+          // updated, so temporarily re-create a cancelled row for this user:
+          // the attached calendar part must be a CANCELLED request so that
+          // Outlook removes the appointment. The row is deleted again right
+          // after the email is sent.
+          $tmp_row = dbi_execute( 'INSERT INTO webcal_entry_user
+            ( cal_id, cal_login, cal_status, cal_percent )
+            VALUES ( ?, ?, ?, ? )',
+            [$id, $old_participant, 'D',
+              ( empty( $old_percent[$old_participant] )
+                ? 0 : $old_percent[$old_participant] )] );
+          $mail->ical_login = $old_participant;
           $mail->WC_Send( $login_fullname, $tempemail,
             $tempfullname, $name, $msg, $htmlmail, $from, $id );
+          if ( $tmp_row )
+            dbi_execute( 'DELETE FROM webcal_entry_user
+              WHERE cal_id = ? AND cal_login = ?', [$id, $old_participant] );
           activity_log( $id, $login, $old_participant, LOG_NOTIFICATION,
             translate( 'User removed from participants list.' ) );
         }
@@ -1125,6 +1140,9 @@ if( empty( $error ) ) {
           }
           // Use WebCalMailer class. Always embed the event as a
           // text/calendar meeting request (same for create & update).
+          // Target this recipient's own participant row so the VEVENT
+          // reflects their status.
+          $mail->ical_login = $i;
           $mail->WC_Send( $login_fullname, $tempemail,
             $tempfullname, $name, $msg, $htmlmail, $from, $id );
           activity_log( $id, $login, $i, LOG_NOTIFICATION, '' );

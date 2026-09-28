@@ -333,9 +333,11 @@ if ( $id > 0 && empty ( $error ) ) {
                 $SEND_EMAIL != 'N' ) {
               reset_language ( empty ( $user_language ) ||
                 $user_language == 'none' ? $LANGUAGE : $user_language );
-              // Plain text notification: for a single-user removal we
-              // cannot build a correct CANCELLED request (the event still
-              // exists for other participants), so no calendar part here.
+              // Send a CANCELLED meeting request for this user so the
+              // appointment is also removed from their Outlook calendar.
+              // Their participant row was just flagged 'D' above, so the
+              // attached VEVENT has STATUS:CANCELLED.
+              $mail->ical_login = $del_user;
               $mail->WC_Send ( $login_fullname, $tempemail, $tempfullname,
                 $dname,
                 str_replace ( 'XXX', $tempfullname,
@@ -346,7 +348,8 @@ if ( $id > 0 && empty ( $error ) ) {
                   translate ( 'Subject XXX' ) ) . "\"\n"
                  . str_replace ( 'XXX', date_to_str ( $ddate ),
                   translate ( 'Date XXX' ) ) . "\n\n",
-                get_pref_setting ( $del_user, 'EMAIL_HTML' ), $login_email );
+                get_pref_setting ( $del_user, 'EMAIL_HTML' ), $login_email,
+                $id );
               activity_log ( $id, $login, $del_user, $log_delete, '' );
             }
           }

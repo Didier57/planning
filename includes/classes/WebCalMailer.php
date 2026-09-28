@@ -34,6 +34,11 @@ class WebCalMailer {
   // treat the message as out-of-order and will not auto-process it.
   public $icalSequence = 0;
 
+  // Login of the participant this calendar part is generated for. When set,
+  // the attached VEVENT reflects that user's own status (a 'D' status
+  // produces a CANCELLED request that removes the appointment).
+  public $ical_login = '';
+
   /**
    * Constructor
    */
@@ -156,7 +161,8 @@ class WebCalMailer {
       // Never let a calendar export failure prevent the email from being
       // sent: fall back to a plain text email in that case.
       try {
-        $ical = export_ical( $id, true, $this->icalMethod, $this->icalSequence );
+        $ical = export_ical( $id, true, $this->icalMethod, $this->icalSequence,
+          $this->ical_login );
       } catch ( \Throwable $e ) {
         error_log( 'WebCalMailer: export_ical failed for id=' . $id
           . ': ' . $e->getMessage() );
@@ -191,6 +197,7 @@ class WebCalMailer {
     $this->mail->ClearCustomHeaders();
     $this->mail->AltBody = '';
     $this->mail->Ical = '';
+    $this->ical_login = '';
   }
 
   /**

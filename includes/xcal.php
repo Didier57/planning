@@ -700,7 +700,8 @@ function export_alarm_ical ( $id, $date, $description, $task_complete = true ) {
   return $ret;
 }
 
-function export_get_event_entry( $id = 'all', $attachment = false ) {
+function export_get_event_entry( $id = 'all', $attachment = false,
+  $attachment_login = '' ) {
   global $cat_filter, $DISPLAY_UNAPPROVED, $enddate,
   $include_layers, $layers, $login, $moddate, $startdate,
   $type, $user, $USER_REMOTE_ACCESS, $use_all_dates;
@@ -738,14 +739,24 @@ function export_get_event_entry( $id = 'all', $attachment = false ) {
     // Calendar parts for email notifications are generated on behalf of a
     // recipient who may not be the logged-in user, and the event's creator is
     // not necessarily a participant (e.g. an assistant booking a meeting on
-    // someone else's calendar). Do not restrict by login here, and pick a
-    // single participant row so the VEVENT is emitted exactly once.
-    $sql .= 'WHERE we.cal_id = ? AND weu.cal_id = ? AND weu.cal_login = (
-      SELECT MIN( p.cal_login ) FROM webcal_entry_user p
-      WHERE p.cal_id = ? AND p.cal_status IN ( \'W\', \'A\', \'D\' ) )';
-    $sql_params[] = $id;
-    $sql_params[] = $id;
-    $sql_params[] = $id;
+    // someone else's calendar). Do not restrict by the session login here.
+    if ( ! empty ( $attachment_login ) ) {
+      // Build the VEVENT from this specific recipient's row so its status
+      // matches what that user must see (a 'D' row produces a CANCELLED
+      // request that removes the appointment from their calendar).
+      $sql .= 'WHERE we.cal_id = ? AND weu.cal_id = ? AND weu.cal_login = ?';
+      $sql_params[] = $id;
+      $sql_params[] = $id;
+      $sql_params[] = $attachment_login;
+    } else {
+      // Pick a single participant row so the VEVENT is emitted exactly once.
+      $sql .= 'WHERE we.cal_id = ? AND weu.cal_id = ? AND weu.cal_login = (
+        SELECT MIN( p.cal_login ) FROM webcal_entry_user p
+        WHERE p.cal_id = ? AND p.cal_status IN ( \'W\', \'A\', \'D\' ) )';
+      $sql_params[] = $id;
+      $sql_params[] = $id;
+      $sql_params[] = $id;
+    }
   } else {
     $sql .= 'WHERE we.cal_id = ? AND weu.cal_id = ? AND
       ( weu.cal_login = ?';
@@ -979,14 +990,15 @@ function export_vcal ( $id ) {
     echo "END:VCALENDAR\r\n";
 } //end function
 
-function export_ical ( $id = 'all', $attachment = false, $method = 'PUBLISH', $sequence = 0 ) {
+function export_ical ( $id = 'all', $attachment = false, $method = 'PUBLISH',
+  $sequence = 0, $attachment_login = '' ) {
   global $cal_type, $cat_filter, $login,
   $publish_fullname, $use_vtimezone, $vtimezone_data, $EMAIL_FALLBACK_FROM;
 
   $exportId = -1;
   $ret = $Vret = $vtimezone_data = $use_vtimezone = '';
 
-  $res = export_get_event_entry( $id, $attachment );
+  $res = export_get_event_entry( $id, $attachment, $attachment_login );
   $entry_array = [];
   $count = 0;
   while ( $entry = dbi_fetch_row( $res ) ) {
